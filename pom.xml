@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.oneandone.maven.poms</groupId>
+        <artifactId>foss-parent</artifactId>
+        <version>1.5.6</version>
+    </parent>
+    <groupId>net.oneandone.maven</groupId>
+    <artifactId>ono-release-version-policies</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>1-and-1 :: FOSS release version policies</name>
+    <description>Additional policies for use with the maven-release-plugin.</description>
+    <inceptionYear>2015</inceptionYear>
+    <scm>
+        <connection>scm:git:git://github.com/1and1/one-release-version-policies.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/1and1/one-release-version-policies.git</developerConnection>
+        <url>https://github.com/1and1/one-release-version-policies/</url>
+    </scm>
+</project>
