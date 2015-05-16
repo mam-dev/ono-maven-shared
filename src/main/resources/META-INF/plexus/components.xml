@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component-set>
+    <components>
+        <component>
+            <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+            <role-hint>ArtifactoryVersionPolicy</role-hint>
+            <implementation>net.oneandone.maven.releasepolicies.ArtifactoryVersionPolicy</implementation>
+        </component>
+        <component>
+            <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+            <role-hint>ScmVersionPolicy</role-hint>
+            <implementation>net.oneandone.maven.releasepolicies.ScmVersionPolicy</implementation>
+            <description/>
+            <isolated-realm>false</isolated-realm>
+        </component>
+    </components>
+</component-set>
