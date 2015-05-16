@@ -19,11 +19,15 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
-        return null;
+        final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
+        versionPolicyResult.setVersion("1.5.7");
+        return versionPolicyResult;
     }
 
     @Override
     public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
-        return null;
+        final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
+        versionPolicyResult.setVersion("1-SNAPSHOT");
+        return versionPolicyResult;
     }
 }
