@@ -1,5 +1,6 @@
 package net.oneandone.maven.releasepolicies;
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
@@ -8,6 +9,7 @@ import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.apache.maven.shared.utils.io.IOUtil;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -26,6 +28,9 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
 
     private static final String HTTP_ARTIFACTORY = "http://repo.jfrog.org/artifactory";
     private static final String REPOSITORIES = "repo1-cache";
+
+    @Requirement
+    protected MavenProject project;
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
