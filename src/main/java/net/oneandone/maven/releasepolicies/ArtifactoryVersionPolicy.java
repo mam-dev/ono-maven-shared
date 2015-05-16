@@ -19,7 +19,7 @@ import java.util.Locale;
  */
 @Component(
         role = VersionPolicy.class,
-        hint = "ArtifactoryyVersionPolicy",
+        hint = "ArtifactoryVersionPolicy",
         description = "A VersionPolicy implementation that retrieve the latest version from Artifactory"
 )
 public class ArtifactoryVersionPolicy implements VersionPolicy {
