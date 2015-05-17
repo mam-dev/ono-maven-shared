@@ -1,7 +1,6 @@
 package net.oneandone.maven.releasepolicies;
 
-import org.apache.maven.shared.release.DefaultReleaseManager;
-import org.apache.maven.shared.release.ReleaseManager;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
@@ -30,13 +29,13 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     private static final String REPOSITORIES = "repo1-cache";
 
     @Requirement
-    ReleaseManager releaseManager;
+    MavenProject mavenProject;
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
-        final String groupId = request.getMetaData().getGroupId();
-        final String artifactId = request.getMetaData().getArtifactId();
+        final String groupId = mavenProject.getGroupId();
+        final String artifactId = mavenProject.getArtifactId();
         final String currentVersion;
         try {
             final URL url = new URL(String.format(
@@ -57,7 +56,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     @Override
     public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
-        versionPolicyResult.setVersion(request.getMetaData().getVersion());
+        versionPolicyResult.setVersion(mavenProject.getVersion());
         return versionPolicyResult;
     }
 }
