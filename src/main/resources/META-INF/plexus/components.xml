@@ -5,6 +5,13 @@
             <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
             <role-hint>ArtifactoryVersionPolicy</role-hint>
             <implementation>net.oneandone.maven.releasepolicies.ArtifactoryVersionPolicy</implementation>
+            <requirements>
+                <requirement>
+                    <role>org.apache.maven.shared.release.config.ReleaseDescriptorStore</role>
+                    <field-name>releaseDescriptorStore</field-name>
+                    <role-hint>properties</role-hint>
+                </requirement>
+            </requirements>
         </component>
         <component>
             <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
@@ -12,6 +19,13 @@
             <implementation>net.oneandone.maven.releasepolicies.ScmVersionPolicy</implementation>
             <description/>
             <isolated-realm>false</isolated-realm>
+            <requirements>
+                <requirement>
+                    <role>org.apache.maven.shared.release.config.ReleaseDescriptorStore</role>
+                    <field-name>releaseDescriptorStore</field-name>
+                    <role-hint>properties</role-hint>
+                </requirement>
+            </requirements>
         </component>
     </components>
 </component-set>

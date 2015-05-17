@@ -1,6 +1,6 @@
 package net.oneandone.maven.releasepolicies;
 
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
@@ -12,7 +12,6 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 
@@ -30,7 +29,8 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     private static final String REPOSITORIES = "repo1-cache";
 
     @Requirement
-    protected MavenProject project;
+    ReleaseDescriptorStore releaseDescriptorStore;
+
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
