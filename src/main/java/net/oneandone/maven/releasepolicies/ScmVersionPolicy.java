@@ -1,6 +1,6 @@
 package net.oneandone.maven.releasepolicies;
 
-import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
+import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
@@ -20,7 +20,7 @@ import org.codehaus.plexus.component.annotations.Requirement;
 public class ScmVersionPolicy implements VersionPolicy {
 
     @Requirement
-    ReleaseDescriptorStore releaseDescriptorStore;
+    ReleaseManager releaseManager;
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {

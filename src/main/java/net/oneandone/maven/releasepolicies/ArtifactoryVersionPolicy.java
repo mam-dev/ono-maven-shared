@@ -1,6 +1,7 @@
 package net.oneandone.maven.releasepolicies;
 
-import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
+import org.apache.maven.shared.release.DefaultReleaseManager;
+import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
@@ -29,8 +30,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     private static final String REPOSITORIES = "repo1-cache";
 
     @Requirement
-    ReleaseDescriptorStore releaseDescriptorStore;
-
+    ReleaseManager releaseManager;
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {

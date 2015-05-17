@@ -7,9 +7,9 @@
             <implementation>net.oneandone.maven.releasepolicies.ArtifactoryVersionPolicy</implementation>
             <requirements>
                 <requirement>
-                    <role>org.apache.maven.shared.release.config.ReleaseDescriptorStore</role>
-                    <field-name>releaseDescriptorStore</field-name>
-                    <role-hint>properties</role-hint>
+                    <role>org.apache.maven.shared.release.ReleaseManager</role>
+                    <field-name>releaseManager</field-name>
+                    <role-hint>default</role-hint>
                 </requirement>
             </requirements>
         </component>
@@ -21,9 +21,9 @@
             <isolated-realm>false</isolated-realm>
             <requirements>
                 <requirement>
-                    <role>org.apache.maven.shared.release.config.ReleaseDescriptorStore</role>
-                    <field-name>releaseDescriptorStore</field-name>
-                    <role-hint>properties</role-hint>
+                    <role>org.apache.maven.shared.release.ReleaseManager</role>
+                    <field-name>releaseManager</field-name>
+                    <role-hint>default</role-hint>
                 </requirement>
             </requirements>
         </component>
