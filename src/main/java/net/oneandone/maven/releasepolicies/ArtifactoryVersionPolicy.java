@@ -11,7 +11,9 @@ import org.apache.maven.shared.utils.io.IOUtil;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 
@@ -31,6 +33,15 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     @Requirement
     MavenProject mavenProject;
 
+
+    // For injection.
+    public ArtifactoryVersionPolicy() {}
+
+    // Just for tests
+    ArtifactoryVersionPolicy(MavenProject mavenProject) {
+        this.mavenProject = mavenProject;
+    }
+
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
@@ -38,19 +49,27 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
         final String artifactId = mavenProject.getArtifactId();
         final String currentVersion;
         try {
-            final URL url = new URL(String.format(
-                    Locale.ENGLISH,
-                    HTTP_ARTIFACTORY + "/api/search/latestVersion?g=%s&a=%s&repos=%s",
-                    groupId, artifactId, REPOSITORIES));
-            try(final InputStream stream = url.openStream()) {
+            final URL url = createURL(groupId, artifactId);
+            try(final InputStream stream = getInputStream(url)) {
                 currentVersion = IOUtil.toString(stream, "UTF-8");
             }
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Unable to access " + HTTP_ARTIFACTORY, e);
         }
         final DefaultVersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
         versionPolicyResult.setVersion(versionInfo.getNextVersion().getReleaseVersionString());
         return versionPolicyResult;
+    }
+
+    InputStream getInputStream(URL url) throws IOException {
+        return url.openStream();
+    }
+
+    URL createURL(String groupId, String artifactId) throws MalformedURLException {
+        return new URL(String.format(
+                        Locale.ENGLISH,
+                        HTTP_ARTIFACTORY + "/api/search/latestVersion?g=%s&a=%s&repos=%s",
+                        groupId, artifactId, REPOSITORIES));
     }
 
     @Override
