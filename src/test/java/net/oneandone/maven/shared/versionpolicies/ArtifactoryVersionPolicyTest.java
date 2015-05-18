@@ -1,4 +1,4 @@
-package net.oneandone.maven.releasepolicies;
+package net.oneandone.maven.shared.versionpolicies;
 
 import com.google.common.base.Charsets;
 import org.apache.maven.project.MavenProject;

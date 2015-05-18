@@ -1,4 +1,4 @@
-package net.oneandone.maven.releasepolicies;
+package net.oneandone.maven.shared.versionpolicies;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
@@ -22,7 +22,7 @@ import java.util.Locale;
  */
 @Component(
         role = VersionPolicy.class,
-        hint = "ArtifactoryVersionPolicy",
+        hint = "ONOArtifactoryVersionPolicy",
         description = "A VersionPolicy implementation that retrieve the latest version from Artifactory"
 )
 public class ArtifactoryVersionPolicy implements VersionPolicy {

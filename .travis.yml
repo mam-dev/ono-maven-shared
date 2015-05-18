@@ -1,0 +1,15 @@
+language: java
+jdk:
+  - oraclejdk7
+  - oraclejdk8
+install: "mvn --errors --show-version --batch-mode -P foss-parent-verification validate dependency:go-offline"
+script: "mvn --errors --show-version --batch-mode -Dversions.skip=true -P foss-parent-verification clean verify site site:stage"
+cache:
+    directories:
+    - $HOME/.m2
+branches:
+    except:
+        - gh-pages
+notifications:
+    email:
+        - mfriedenhagen@gmail.com

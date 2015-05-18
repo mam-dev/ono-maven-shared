@@ -1,4 +1,4 @@
-package net.oneandone.maven.releasepolicies;
+package net.oneandone.maven.shared.versionpolicies;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
@@ -14,8 +14,8 @@ import org.codehaus.plexus.component.annotations.Requirement;
  */
 @Component(
         role = VersionPolicy.class,
-        hint = "ScmVersionPolicy",
-        description = "A VersionPolicy implementation that Retrieve the latest version from the SCM and just increases."
+        hint = "ONOScmVersionPolicy",
+        description = "A VersionPolicy implementation that retrieves the latest version from the SCM and just increases."
 )
 public class ScmVersionPolicy implements VersionPolicy {
 
