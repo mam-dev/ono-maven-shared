@@ -5,6 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <maven-release.version>2.5.2</maven-release.version>
+        <jacoco.check.classRatio>0.90</jacoco.check.classRatio>
+        <jacoco.check.instructionRatio>0.75</jacoco.check.instructionRatio>
+        <jacoco.check.methodRatio>0.75</jacoco.check.methodRatio>
+        <jacoco.check.branchRatio>0.20</jacoco.check.branchRatio>
+        <jacoco.check.complexityRatio>0.50</jacoco.check.complexityRatio>
+        <jacoco.check.lineRatio>0.90</jacoco.check.lineRatio>
     </properties>
     <parent>
         <groupId>net.oneandone.maven.poms</groupId>
