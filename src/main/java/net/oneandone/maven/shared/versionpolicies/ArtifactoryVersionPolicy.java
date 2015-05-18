@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
+import java.util.Properties;
 
 /**
  * A {@link VersionPolicy} implementation that retrieve the latest version from the SCM and just increases.
@@ -33,6 +34,9 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     @Requirement
     MavenProject mavenProject;
 
+    String httpArtifactory;
+
+    String artifactoryRepositories;
 
     // For injection.
     public ArtifactoryVersionPolicy() {}
@@ -45,31 +49,36 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
-        final String groupId = mavenProject.getGroupId();
-        final String artifactId = mavenProject.getArtifactId();
         final String currentVersion;
         try {
-            final URL url = createURL(groupId, artifactId);
+            final URL url = createURL(mavenProject);
             try(final InputStream stream = getInputStream(url)) {
                 currentVersion = IOUtil.toString(stream, "UTF-8");
             }
         } catch (IOException e) {
-            throw new RuntimeException("Unable to access " + HTTP_ARTIFACTORY, e);
+            throw new RuntimeException("Unable to access " + httpArtifactory, e);
         }
         final DefaultVersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
         versionPolicyResult.setVersion(versionInfo.getNextVersion().getReleaseVersionString());
         return versionPolicyResult;
     }
 
-    InputStream getInputStream(URL url) throws IOException {
-        return url.openStream();
+    private URL createURL(MavenProject mavenProject) throws MalformedURLException {
+        return new URL(createUrlString(mavenProject));
     }
 
-    URL createURL(String groupId, String artifactId) throws MalformedURLException {
-        return new URL(String.format(
+    String createUrlString(MavenProject mavenProject) {
+        final Properties properties = this.mavenProject.getProperties();
+        httpArtifactory = properties.getProperty("artifactory-http", HTTP_ARTIFACTORY);
+        artifactoryRepositories = properties.getProperty("artifactory-repositories", REPOSITORIES);
+        return String.format(
                         Locale.ENGLISH,
-                        HTTP_ARTIFACTORY + "/api/search/latestVersion?g=%s&a=%s&repos=%s",
-                        groupId, artifactId, REPOSITORIES));
+                        httpArtifactory + "/api/search/latestVersion?g=%s&a=%s&repos=%s",
+                mavenProject.getGroupId(), mavenProject.getArtifactId(), artifactoryRepositories);
+    }
+
+    InputStream getInputStream(URL url) throws IOException {
+        return url.openStream();
     }
 
     @Override

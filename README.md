@@ -18,28 +18,36 @@
   retrieves the number from Artifactory and sets the `releaseVersion` to the next number. The next 
   `developmentVersion` always stays the same until you change it yourself in the source. 
 
-### Usage 
+### Usage `ONOArtifactoryVersionPolicy
+
+* Include shared library as `dependency` to `maven-release-plugin`.
+* Set `projectVersionPolicyId` to `ONOArtifactoryVersionPolicy`.
+* Optionally set `artifactory-http` and `artifactory-repositories`.
 
 ```xml
-<project>
-    <properties>
-        <projectVersionPolicyId>ONOArtifactoryVersionPolicy</projectVersionPolicyId>
-    </properties>
-    <build><pluginManagement><plugins>
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>${maven-release-plugin.version}</version>
-        <dependencies>
-            <dependency>
-                <groupId>net.oneandone.maven</groupId>
-                <artifactId>ono-maven-shared</artifactId>
-                <version>1.XX</version>
-            </dependency>
-        </dependencies>
-    </plugin>
-    </plugins></pluginManagement></build>
-</project>
+    <project>
+        <properties>
+            <projectVersionPolicyId>ONOArtifactoryVersionPolicy</projectVersionPolicyId>
+            <!-- for inhouse repositories -->
+            <artifactory-http>http://artifactory.example.com/artifactory</artifactory-http>
+            <!-- for inhouse repositories -->
+            <artifactory-repositories>first-repo,second-repo</artifactory-repositories>
+        </properties>
+        <build><pluginManagement><plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>${maven-release-plugin.version}</version>
+            <dependencies>
+                <dependency>
+                    <groupId>net.oneandone.maven</groupId>
+                    <artifactId>ono-maven-shared</artifactId>
+                    <version>0.X</version>
+                </dependency>
+            </dependencies>
+        </plugin>
+        </plugins></pluginManagement></build>
+    </project>
 ```
 
 [maven-release-plugin]: http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#projectVersionPolicyId

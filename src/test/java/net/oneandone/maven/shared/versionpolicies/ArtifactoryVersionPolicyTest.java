@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,6 +52,27 @@ public class ArtifactoryVersionPolicyTest {
         final VersionPolicyRequest versionPolicyRequest = createVersionPolicyRequest();
         final VersionPolicyResult releaseVersion = subjectUnderTest.getDevelopmentVersion(versionPolicyRequest);
         assertThat(releaseVersion.getVersion()).isEqualTo("1-SNAPSHOT");
+    }
+
+    @Test
+    public void testCreateUrlString() {
+        final MavenProject mavenProject = createMavenProject();
+        final Properties properties = mavenProject.getProperties();
+        properties.setProperty("artifactory-http", "http://artifactory.example.com/artifactory");
+        properties.setProperty("artifactory-repositories", "first-repo,second-repo");
+        final ArtifactoryVersionPolicy subjectUnderTest = new ArtifactoryVersionPolicy(mavenProject);
+        assertThat(subjectUnderTest.createUrlString(
+                mavenProject)).isEqualTo(
+                "http://artifactory.example.com/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=first-repo,second-repo");
+    }
+
+    @Test
+    public void testCreateUrlStringDefaul() {
+        final MavenProject mavenProject = createMavenProject();
+        final ArtifactoryVersionPolicy subjectUnderTest = new ArtifactoryVersionPolicy(mavenProject);
+        assertThat(subjectUnderTest.createUrlString(
+                mavenProject)).isEqualTo(
+                "http://repo.jfrog.org/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=repo1-cache");
     }
 
     private VersionPolicyRequest createVersionPolicyRequest() {
