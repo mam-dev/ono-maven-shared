@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <properties>
-        <maven-release.version>2.5.2</maven-release.version>
-        <jacoco.check.classRatio>0.90</jacoco.check.classRatio>
-        <jacoco.check.instructionRatio>0.75</jacoco.check.instructionRatio>
-        <jacoco.check.methodRatio>0.75</jacoco.check.methodRatio>
-        <jacoco.check.branchRatio>0.20</jacoco.check.branchRatio>
-        <jacoco.check.complexityRatio>0.50</jacoco.check.complexityRatio>
-        <jacoco.check.lineRatio>0.90</jacoco.check.lineRatio>
-    </properties>
+
     <parent>
         <groupId>net.oneandone.maven.poms</groupId>
         <artifactId>foss-parent</artifactId>
         <version>1.5.6</version>
     </parent>
+
     <groupId>net.oneandone.maven</groupId>
     <artifactId>ono-maven-shared</artifactId>
     <version>1.1-SNAPSHOT</version>
+
     <name>1-and-1 :: FOSS Libraries useable by Apache Maven</name>
     <description>Additional policies for use with the maven-release-plugin.</description>
     <inceptionYear>2015</inceptionYear>
+
     <scm>
         <connection>scm:git:git://github.com/1and1/ono-maven-shared.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/1and1/ono-maven-shared.git</developerConnection>
@@ -35,6 +30,17 @@
         <system>Travis</system>
         <url>https://travis-ci.org/1and1/ono-maven-shared/</url>
     </ciManagement>
+
+    <properties>
+        <maven-release.version>2.5.2</maven-release.version>
+        <jacoco.check.classRatio>0.90</jacoco.check.classRatio>
+        <jacoco.check.instructionRatio>0.75</jacoco.check.instructionRatio>
+        <jacoco.check.methodRatio>0.75</jacoco.check.methodRatio>
+        <jacoco.check.branchRatio>0.20</jacoco.check.branchRatio>
+        <jacoco.check.complexityRatio>0.50</jacoco.check.complexityRatio>
+        <jacoco.check.lineRatio>0.90</jacoco.check.lineRatio>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -154,6 +160,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -171,4 +178,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
