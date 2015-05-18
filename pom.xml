@@ -18,9 +18,9 @@
     <description>Additional policies for use with the maven-release-plugin.</description>
     <inceptionYear>2015</inceptionYear>
     <scm>
-        <connection>scm:git:git://github.com/1and1/one-maven-shared.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/1and1/one-maven-shared.git</developerConnection>
-        <url>https://github.com/1and1/one-maven-shared/</url>
+        <connection>scm:git:git://github.com/1and1/ono-maven-shared.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/1and1/ono-maven-shared.git</developerConnection>
+        <url>https://github.com/1and1/ono-maven-shared/</url>
     </scm>
     <issueManagement>
         <system>GitHub</system>
