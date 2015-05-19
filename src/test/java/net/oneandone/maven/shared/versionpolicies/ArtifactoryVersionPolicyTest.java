@@ -28,15 +28,30 @@ import java.net.URL;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
 
     @Test(expected = PolicyException.class)
-    public void testGetReleaseVersionPolicyException() throws Exception {
+    public void testGetReleaseVersionPolicyExceptionDuringOpen() throws Exception {
         final ArtifactoryVersionPolicy subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject()) {
             @Override
             InputStream getInputStream(URL url) throws IOException {
-                throw new IOException("Oops");
+                throw new IOException("Could not open");
+            }
+        };
+        subjectUnderTest.getReleaseVersion(null);
+    }
+
+    @Test(expected = PolicyException.class)
+    public void testGetReleaseVersionPolicyExceptionDuringRead() throws Exception {
+        final InputStream stream = mock(InputStream.class);
+        when(stream.read()).thenThrow(new IOException("Could not read"));
+        final ArtifactoryVersionPolicy subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject()) {
+            @Override
+            InputStream getInputStream(URL url) throws IOException {
+                return stream;
             }
         };
         subjectUnderTest.getReleaseVersion(null);
@@ -77,7 +92,7 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
     }
 
     ArtifactoryVersionPolicy createArtifactoryVersionPolicyWithValidResultFromArtifactory() {
-        return new ArtifactoryVersionPolicy(createMavenProject()){
+        return new ArtifactoryVersionPolicy(createMavenProject()) {
             @Override
             InputStream getInputStream(URL url) throws IOException {
                 return new ByteArrayInputStream("1.5.6".getBytes(Charsets.UTF_8));
