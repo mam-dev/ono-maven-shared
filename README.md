@@ -3,6 +3,8 @@
 * Currently some code is smeared and repeated in several plugins.
 * Try to consolidate this in here.
 
+Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shared.svg?branch=master)](https://travis-ci.org/1and1/ono-maven-shared)
+
 ## VersionPolicies
 
 ### Introduction
