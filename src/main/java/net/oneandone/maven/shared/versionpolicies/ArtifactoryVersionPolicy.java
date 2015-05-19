@@ -72,10 +72,17 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
                 currentVersion = IOUtil.toString(stream, "UTF-8");
             }
         } catch (IOException e) {
-            throw new RuntimeException("Unable to access " + httpArtifactory, e);
+            throw new PolicyException("Unable to access " + httpArtifactory, e);
         }
         final DefaultVersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
         versionPolicyResult.setVersion(versionInfo.getNextVersion().getReleaseVersionString());
+        return versionPolicyResult;
+    }
+
+    @Override
+    public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
+        final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
+        versionPolicyResult.setVersion(mavenProject.getVersion());
         return versionPolicyResult;
     }
 
@@ -95,12 +102,5 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
 
     InputStream getInputStream(URL url) throws IOException {
         return url.openStream();
-    }
-
-    @Override
-    public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
-        final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
-        versionPolicyResult.setVersion(mavenProject.getVersion());
-        return versionPolicyResult;
     }
 }

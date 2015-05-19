@@ -15,21 +15,19 @@
  */
 package net.oneandone.maven.shared.versionpolicies;
 
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScmVersionPolicyTest {
-
-    @Test
-    public void testGetReleaseVersion() throws Exception {
-        final ScmVersionPolicy subjectUnderTest = new ScmVersionPolicy();
-        assertThat(subjectUnderTest.getReleaseVersion(null)).isNull();
+public abstract class AbstractVersionPolicyTest {
+    MavenProject createMavenProject() {
+        final MavenProject project = new MavenProject();
+        project.setGroupId("net.oneandone.maven.poms");
+        project.setArtifactId("foss-parent");
+        project.setVersion("1-SNAPSHOT");
+        return project;
     }
 
-    @Test
-    public void testGetDevelopmentVersion() throws Exception {
-        final ScmVersionPolicy subjectUnderTest = new ScmVersionPolicy();
-        assertThat(subjectUnderTest.getDevelopmentVersion(null)).isNull();
-    }
 }
