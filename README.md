@@ -18,7 +18,7 @@
   retrieves the number from Artifactory and sets the `releaseVersion` to the next number. The next 
   `developmentVersion` always stays the same until you change it yourself in the source. 
 
-### Usage `ONOArtifactoryVersionPolicy
+### Usage `ONOArtifactoryVersionPolicy`
 
 * Include shared library as `dependency` to `maven-release-plugin`.
 * Set `projectVersionPolicyId` to `ONOArtifactoryVersionPolicy`.
