@@ -52,21 +52,24 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
     </project>
 ```
 
-### `ONOJenkinsBuildNumberVersionPolicy`
+### `ONOBuildNumberVersionPolicy`
 
 * Say you have a schema, where you always want to use `MAJOR-SNAPSHOT` or `MAJOR.MINOR-SNAPSHOT` and the next release
   version will always be `MAJOR.MINOR` or `MAJOR.MINOR.MICRO` and you want to use the `BUILD_NUMBER` available
-  from your Jenkins job to be used as variable.
-* [JenkinsBuildNumberVersionPolicy](src/main/java/net/oneandone/maven/shared/versionpolicies/JenkinsBuildNumberVersionPolicy.java)
+  from your CI job to be used as variable.
+* [BuildNumberVersionPolicy](src/main/java/net/oneandone/maven/shared/versionpolicies/BuildNumberVersionPolicy.java)
   attaches the `BUILD_NUMBER` as `MINOR` or `MICRO` version. The next 
   `developmentVersion` always stays the same until you change it yourself in the source. 
 * Include shared library as `dependency` to `maven-release-plugin`.
-* Set `projectVersionPolicyId` to `ONOJenkinsBuildNumberVersionPolicy`.
+* Set `projectVersionPolicyId` to `ONOBuildNumberVersionPolicy`.
+* Optionally set `<buildnumber-versions-policy-identifier>` when the environment name of your build number is
+  something else, e.g. `TRAVIS_BUILD_NUMBER`.
 
 ```xml
     <project>
         <properties>
-            <projectVersionPolicyId>ONOJenkinsBuildNumberVersionPolicy</projectVersionPolicyId>
+            <projectVersionPolicyId>ONOBuildNumberVersionPolicy</projectVersionPolicyId>
+            <buildnumber-versions-policy-identifier>TRAVIS_BUILD_NUMBER<buildnumber-versions-policy-identifier>
         </properties>
         <build><pluginManagement><plugins>
         <plugin>
@@ -77,7 +80,7 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
                 <dependency>
                     <groupId>net.oneandone.maven</groupId>
                     <artifactId>ono-maven-shared</artifactId>
-                    <version>0.X</version>
+                    <version>1.X</version>
                 </dependency>
             </dependencies>
         </plugin>

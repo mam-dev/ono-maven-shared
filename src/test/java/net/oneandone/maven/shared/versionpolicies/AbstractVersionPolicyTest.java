@@ -16,10 +16,6 @@
 package net.oneandone.maven.shared.versionpolicies;
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
-import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class AbstractVersionPolicyTest {
     MavenProject createMavenProject() {

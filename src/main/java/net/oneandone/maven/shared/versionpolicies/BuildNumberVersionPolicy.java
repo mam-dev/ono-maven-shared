@@ -28,41 +28,46 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import java.util.Map;
 
 /**
- * A {@link VersionPolicy} implementation that retrieves the BUILD_NUMBER from Jenkins and bases the next
+ * A {@link VersionPolicy} implementation that retrieves a BUILD_NUMBER from a CI-system and bases the next
  * releaseVersion on it.
  */
 @Component(
         role = VersionPolicy.class,
-        hint = "ONOJenkinsBuildNumberVersionPolicy",
-        description = "Retrieves the BUILD_NUMBER from Jenkins and bases the next releaseVersion on it."
+        hint = "ONOBuildNumberVersionPolicy",
+        description = "Retrieves a BUILD_NUMBER from a CI-system and bases the next releaseVersion on it."
 )
-public class JenkinsBuildNumberVersionPolicy implements VersionPolicy {
+public class BuildNumberVersionPolicy implements VersionPolicy {
 
+    private static final String DEFAULT_BUILD_NUMBER_IDENTIFIER = "BUILD_NUMBER";
+    Map<String, String> systemEnv;
     @Requirement
     MavenProject mavenProject;
-
-    private Map<String, String> systemEnv;
 
     /**
      * For injection
      */
-    public JenkinsBuildNumberVersionPolicy() {
+    public BuildNumberVersionPolicy() {
         systemEnv = System.getenv();
     }
 
     /**
      * For tests
      */
-    JenkinsBuildNumberVersionPolicy(MavenProject mavenProject, Map<String, String> systemEnv) {
+    BuildNumberVersionPolicy(MavenProject mavenProject, Map<String, String> systemEnv) {
         this.mavenProject = mavenProject;
         this.systemEnv = systemEnv;
+    }
+
+    String getBuildNumberEnvironmentName() {
+        return mavenProject.getProperties().
+                getProperty("buildnumber-versions-policy-identifier", DEFAULT_BUILD_NUMBER_IDENTIFIER);
     }
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
         final DefaultVersionInfo currentSnapshot = new DefaultVersionInfo(mavenProject.getVersion());
         final VersionPolicyResult result = new VersionPolicyResult();
-        result.setVersion(currentSnapshot.getReleaseVersionString() + "." + systemEnv.get("BUILD_NUMBER"));
+        result.setVersion(currentSnapshot.getReleaseVersionString() + "." + systemEnv.get(getBuildNumberEnvironmentName()));
         return result;
     }
 
