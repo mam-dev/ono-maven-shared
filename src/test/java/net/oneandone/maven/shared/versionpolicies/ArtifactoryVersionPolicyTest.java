@@ -61,21 +61,19 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
 
     @Test
     public void testCreateUrlString() {
-        final MavenProject mavenProject = createMavenProject();
+        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithValidResultFromArtifactory();
+        final MavenProject mavenProject = subjectUnderTest.mavenProject;
         final Properties properties = mavenProject.getProperties();
         properties.setProperty("artifactory-http", "http://artifactory.example.com/artifactory");
         properties.setProperty("artifactory-repositories", "first-repo,second-repo");
-        final ArtifactoryVersionPolicy subjectUnderTest = new ArtifactoryVersionPolicy(mavenProject);
-        assertThat(subjectUnderTest.createUrlString(
-                mavenProject)).isEqualTo(
+        assertThat(subjectUnderTest.createUrlString()).isEqualTo(
                 "http://artifactory.example.com/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=first-repo,second-repo");
     }
 
     @Test
     public void testCreateUrlStringDefaul() {
-        final ArtifactoryVersionPolicy subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject());
-        assertThat(subjectUnderTest.createUrlString(
-                createMavenProject())).isEqualTo(
+        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithValidResultFromArtifactory();
+        assertThat(subjectUnderTest.createUrlString()).isEqualTo(
                 "http://repo.jfrog.org/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=repo1-cache");
     }
 

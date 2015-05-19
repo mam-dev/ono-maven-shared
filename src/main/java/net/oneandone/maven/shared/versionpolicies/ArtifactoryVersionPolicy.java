@@ -67,7 +67,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
         final String currentVersion;
         try {
-            final URL url = createURL(mavenProject);
+            final URL url = createURL();
             try(final InputStream stream = getInputStream(url)) {
                 currentVersion = IOUtil.toString(stream, "UTF-8");
             }
@@ -86,12 +86,12 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
         return versionPolicyResult;
     }
 
-    private URL createURL(MavenProject mavenProject) throws MalformedURLException {
-        return new URL(createUrlString(mavenProject));
+    private URL createURL() throws MalformedURLException {
+        return new URL(createUrlString());
     }
 
-    String createUrlString(MavenProject mavenProject) {
-        final Properties properties = this.mavenProject.getProperties();
+    String createUrlString() {
+        final Properties properties = mavenProject.getProperties();
         httpArtifactory = properties.getProperty("artifactory-http", HTTP_ARTIFACTORY);
         artifactoryRepositories = properties.getProperty("artifactory-repositories", REPOSITORIES);
         return String.format(
