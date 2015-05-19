@@ -39,8 +39,7 @@ public class ArtifactoryVersionPolicyTest {
                 return new ByteArrayInputStream("1.5.6".getBytes(Charsets.UTF_8));
             }
         };
-        final VersionPolicyRequest versionPolicyRequest = createVersionPolicyRequest();
-        final VersionPolicyResult releaseVersion = subjectUnderTest.getReleaseVersion(versionPolicyRequest);
+        final VersionPolicyResult releaseVersion = subjectUnderTest.getReleaseVersion(null);
         assertThat(releaseVersion.getVersion()).isEqualTo("1.5.7");
     }
 
@@ -52,8 +51,7 @@ public class ArtifactoryVersionPolicyTest {
                 throw new IOException("Oops");
             }
         };
-        final VersionPolicyRequest versionPolicyRequest = createVersionPolicyRequest();
-        subjectUnderTest.getReleaseVersion(versionPolicyRequest);
+        subjectUnderTest.getReleaseVersion(null);
     }
 
     @Test
@@ -64,8 +62,7 @@ public class ArtifactoryVersionPolicyTest {
                 return new ByteArrayInputStream("1.5.6".getBytes(Charsets.UTF_8));
             }
         };
-        final VersionPolicyRequest versionPolicyRequest = createVersionPolicyRequest();
-        final VersionPolicyResult releaseVersion = subjectUnderTest.getDevelopmentVersion(versionPolicyRequest);
+        final VersionPolicyResult releaseVersion = subjectUnderTest.getDevelopmentVersion(null);
         assertThat(releaseVersion.getVersion()).isEqualTo("1-SNAPSHOT");
     }
 
@@ -83,17 +80,10 @@ public class ArtifactoryVersionPolicyTest {
 
     @Test
     public void testCreateUrlStringDefaul() {
-        final MavenProject mavenProject = createMavenProject();
-        final ArtifactoryVersionPolicy subjectUnderTest = new ArtifactoryVersionPolicy(mavenProject);
+        final ArtifactoryVersionPolicy subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject());
         assertThat(subjectUnderTest.createUrlString(
-                mavenProject)).isEqualTo(
+                createMavenProject())).isEqualTo(
                 "http://repo.jfrog.org/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=repo1-cache");
-    }
-
-    private VersionPolicyRequest createVersionPolicyRequest() {
-        final VersionPolicyRequest versionPolicyRequest = new VersionPolicyRequest();
-        versionPolicyRequest.setVersion("1-SNAPSHOT");
-        return versionPolicyRequest;
     }
 
     private MavenProject createMavenProject() {

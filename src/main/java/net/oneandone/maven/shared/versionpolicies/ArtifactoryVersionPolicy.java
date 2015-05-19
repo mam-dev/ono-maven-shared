@@ -34,12 +34,13 @@ import java.util.Locale;
 import java.util.Properties;
 
 /**
- * A {@link VersionPolicy} implementation that retrieve the latest version from the SCM and just increases.
+ * A {@link VersionPolicy} implementation that retrieves the latest release from Artifactory and
+ * bases the next releaseVersion on it.
  */
 @Component(
         role = VersionPolicy.class,
         hint = "ONOArtifactoryVersionPolicy",
-        description = "A VersionPolicy implementation that retrieve the latest version from Artifactory"
+        description = "Retrieves the latest release from Artifactory and bases the next releaseVersion on it."
 )
 public class ArtifactoryVersionPolicy implements VersionPolicy {
 
