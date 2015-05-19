@@ -91,6 +91,12 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
         assertThat(releaseVersion.getVersion()).isEqualTo("1-SNAPSHOT");
     }
 
+    // Almost useless but good for line and instruction coverage.
+    @Test
+    public void testDefaultConstructors() {
+        new ArtifactoryVersionPolicy();
+    }
+
     ArtifactoryVersionPolicy createArtifactoryVersionPolicyWithValidResultFromArtifactory() {
         return new ArtifactoryVersionPolicy(createMavenProject()) {
             @Override
