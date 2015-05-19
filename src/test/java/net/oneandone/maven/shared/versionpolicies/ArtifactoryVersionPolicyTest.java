@@ -28,6 +28,8 @@ import java.net.URL;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +49,7 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
     @Test(expected = PolicyException.class)
     public void testGetReleaseVersionPolicyExceptionDuringRead() throws Exception {
         final InputStream stream = mock(InputStream.class);
-        when(stream.read()).thenThrow(new IOException("Could not read"));
+        when(stream.read(any(byte[].class), anyInt(), anyInt())).thenThrow(new IOException("VP could not read"));
         final ArtifactoryVersionPolicy subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject()) {
             @Override
             InputStream getInputStream(URL url) throws IOException {
