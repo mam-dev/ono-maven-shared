@@ -28,7 +28,6 @@ import org.codehaus.plexus.component.annotations.Requirement;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
@@ -45,7 +44,11 @@ import java.util.Properties;
 public class ArtifactoryVersionPolicy implements VersionPolicy {
 
     private static final String HTTP_ARTIFACTORY = "http://repo.jfrog.org/artifactory";
-    private static final String REPOSITORIES = "repo1-cache";
+    private static final String REPOSITORIES = "repo1";
+
+    static final String ARTIFACTORY_VERSION_POLICY_API = "artifactory-version-policy-http";
+
+    static final String ARTIFACTORY_VERSION_POLICY_REPOSITORIES = "artifactory-version-policy-repositories";
 
     @Requirement
     MavenProject mavenProject;
@@ -66,13 +69,14 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
         final String currentVersion;
+        final String urlString = createUrlString();
         try {
-            final URL url = createURL();
+            final URL url = new URL(urlString);
             try(final InputStream stream = getInputStream(url)) {
                 currentVersion = IOUtil.toString(stream, "UTF-8");
             }
         } catch (IOException e) {
-            throw new PolicyException("Unable to access " + httpArtifactory, e);
+            throw new PolicyException("Unable to access " + urlString, e);
         }
         final DefaultVersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
         versionPolicyResult.setVersion(versionInfo.getNextVersion().getReleaseVersionString());
@@ -86,14 +90,10 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
         return versionPolicyResult;
     }
 
-    private URL createURL() throws MalformedURLException {
-        return new URL(createUrlString());
-    }
-
     String createUrlString() {
         final Properties properties = mavenProject.getProperties();
-        httpArtifactory = properties.getProperty("artifactory-http", HTTP_ARTIFACTORY);
-        artifactoryRepositories = properties.getProperty("artifactory-repositories", REPOSITORIES);
+        httpArtifactory = properties.getProperty(ARTIFACTORY_VERSION_POLICY_API, HTTP_ARTIFACTORY);
+        artifactoryRepositories = properties.getProperty(ARTIFACTORY_VERSION_POLICY_REPOSITORIES, REPOSITORIES);
         return String.format(
                         Locale.ENGLISH,
                         httpArtifactory + "/api/search/latestVersion?g=%s&a=%s&repos=%s",

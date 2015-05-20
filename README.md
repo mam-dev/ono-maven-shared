@@ -24,16 +24,18 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
   `developmentVersion` always stays the same until you change it yourself in the source. 
 * Include shared library as `dependency` to `maven-release-plugin`.
 * Set `projectVersionPolicyId` to `ONOArtifactoryVersionPolicy`.
-* Optionally set `artifactory-http` and `artifactory-repositories`.
+* Optionally set:
+ * `artifactory-version-policy-http`: Base-URL of Artifactory (without trailing slash, defaults to http://repo.jfrog.org/artifactory) 
+ * `artifactory-version-policy-repositories`: Comma separated list of repositories to search (defaults to: repo1) 
 
 ```xml
     <project>
         <properties>
             <projectVersionPolicyId>ONOArtifactoryVersionPolicy</projectVersionPolicyId>
             <!-- for inhouse repositories -->
-            <artifactory-http>http://artifactory.example.com/artifactory</artifactory-http>
+            <artifactory-version-policy-http>http://artifactory.example.com/artifactory</artifactory-version-policy-http>
             <!-- for inhouse repositories -->
-            <artifactory-repositories>first-repo,second-repo</artifactory-repositories>
+            <artifactory-version-policy-repositories>first-repo,second-repo</artifactory-version-policy-repositories>
         </properties>
         <build><pluginManagement><plugins>
         <plugin>
