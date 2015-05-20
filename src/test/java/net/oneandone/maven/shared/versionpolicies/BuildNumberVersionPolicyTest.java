@@ -31,7 +31,15 @@ public class BuildNumberVersionPolicyTest extends AbstractVersionPolicyTest {
     @Test
     public void testGetReleaseVersionJenkins() throws Exception {
         final String buildNumberIdentifier = "BUILD_NUMBER";
-        testGetReleaseVersion(buildNumberIdentifier, createMavenProject());
+        testGetReleaseVersion(buildNumberIdentifier, "1", createMavenProject());
+    }
+
+    @Test
+    public void testGetReleaseVersionJenkinsMajorMinor() throws Exception {
+        final String buildNumberIdentifier = "BUILD_NUMBER";
+        final MavenProject mavenProject = createMavenProject();
+        mavenProject.setVersion("1.2-SNAPSHOT");
+        testGetReleaseVersion(buildNumberIdentifier, "1.2", mavenProject);
     }
 
     @Test
@@ -39,7 +47,7 @@ public class BuildNumberVersionPolicyTest extends AbstractVersionPolicyTest {
         final String buildNumberIdentifier = "TRAVIS_BUILD_NUMBER";
         final MavenProject mavenProject = createMavenProject();
         mavenProject.getProperties().setProperty("buildnumber-versions-policy-identifier", buildNumberIdentifier);
-        testGetReleaseVersion(buildNumberIdentifier, mavenProject);
+        testGetReleaseVersion(buildNumberIdentifier, "1", mavenProject);
     }
 
     @Test
@@ -57,13 +65,13 @@ public class BuildNumberVersionPolicyTest extends AbstractVersionPolicyTest {
         new BuildNumberVersionPolicy();
     }
 
-    void testGetReleaseVersion(String buildNumberIdentifier, MavenProject mavenProject) throws PolicyException, VersionParseException {
+    void testGetReleaseVersion(String buildNumberIdentifier, String stem, MavenProject mavenProject) throws PolicyException, VersionParseException {
         final Map<String, String> systemEnv = new HashMap<>();
         final BuildNumberVersionPolicy subjectUnderTest = new BuildNumberVersionPolicy(mavenProject, systemEnv);
         systemEnv.put(buildNumberIdentifier, "5");
-        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("1.5");
+        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo(stem + ".5");
         systemEnv.put(buildNumberIdentifier, "6");
-        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("1.6");
+        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo(stem + ".6");
     }
 
 }
