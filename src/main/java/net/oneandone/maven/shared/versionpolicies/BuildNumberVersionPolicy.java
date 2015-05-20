@@ -60,7 +60,7 @@ public class BuildNumberVersionPolicy implements VersionPolicy {
 
     String getBuildNumberEnvironmentName() {
         return mavenProject.getProperties().
-                getProperty("buildnumber-versions-policy-identifier", DEFAULT_BUILD_NUMBER_IDENTIFIER);
+                getProperty("buildnumber-version-policy-identifier", DEFAULT_BUILD_NUMBER_IDENTIFIER);
     }
 
     @Override

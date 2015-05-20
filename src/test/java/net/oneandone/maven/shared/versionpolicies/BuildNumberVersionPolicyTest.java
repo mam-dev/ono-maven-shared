@@ -46,7 +46,7 @@ public class BuildNumberVersionPolicyTest extends AbstractVersionPolicyTest {
     public void testGetReleaseVersionTravis() throws Exception {
         final String buildNumberIdentifier = "TRAVIS_BUILD_NUMBER";
         final MavenProject mavenProject = createMavenProject();
-        mavenProject.getProperties().setProperty("buildnumber-versions-policy-identifier", buildNumberIdentifier);
+        mavenProject.getProperties().setProperty("buildnumber-version-policy-identifier", buildNumberIdentifier);
         testGetReleaseVersion(buildNumberIdentifier, "1", mavenProject);
     }
 

@@ -64,14 +64,16 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
   `developmentVersion` always stays the same until you change it yourself in the source. 
 * Include shared library as `dependency` to `maven-release-plugin`.
 * Set `projectVersionPolicyId` to `ONOBuildNumberVersionPolicy`.
-* Optionally set `<buildnumber-versions-policy-identifier>` when the environment name of your build number is
+* Optionally set `<buildnumber-version-policy-identifier>` when the environment name of your build number is
   something else, e.g. `TRAVIS_BUILD_NUMBER`.
+* See #2 as well.
+
 
 ```xml
     <project>
         <properties>
             <projectVersionPolicyId>ONOBuildNumberVersionPolicy</projectVersionPolicyId>
-            <buildnumber-versions-policy-identifier>TRAVIS_BUILD_NUMBER<buildnumber-versions-policy-identifier>
+            <buildnumber-version-policy-identifier>TRAVIS_BUILD_NUMBER<buildnumber-version-policy-identifier>
         </properties>
         <build><pluginManagement><plugins>
         <plugin>
