@@ -64,8 +64,8 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
         final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithValidResultFromArtifactory();
         final MavenProject mavenProject = subjectUnderTest.mavenProject;
         final Properties properties = mavenProject.getProperties();
-        properties.setProperty(ArtifactoryVersionPolicy.ARTIFACTORY_VERSION_POLICY_API, "http://artifactory.example.com/artifactory");
-        properties.setProperty(ArtifactoryVersionPolicy.ARTIFACTORY_VERSION_POLICY_REPOSITORIES, "first-repo,second-repo");
+        properties.setProperty("artifactory-version-policy-http", "http://artifactory.example.com/artifactory");
+        properties.setProperty("artifactory-version-policy-repositories", "first-repo,second-repo");
         assertThat(subjectUnderTest.createUrlString()).isEqualTo(
                 "http://artifactory.example.com/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=first-repo,second-repo");
     }
