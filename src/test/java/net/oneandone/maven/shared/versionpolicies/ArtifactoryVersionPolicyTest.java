@@ -19,6 +19,7 @@ import com.google.common.base.Charsets;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
+import org.apache.maven.shared.release.versions.VersionParseException;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -61,7 +62,7 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
 
     @Test
     public void testCreateUrlString() {
-        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithValidResultFromArtifactory();
+        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
         final MavenProject mavenProject = subjectUnderTest.mavenProject;
         final Properties properties = mavenProject.getProperties();
         properties.setProperty("artifactory-version-policy-http", "http://artifactory.example.com/artifactory");
@@ -72,21 +73,38 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
 
     @Test
     public void testCreateUrlStringDefault() {
-        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithValidResultFromArtifactory();
+        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
         assertThat(subjectUnderTest.createUrlString()).isEqualTo(
                 "http://repo.jfrog.org/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=repo1");
     }
 
     @Test
     public void testGetReleaseVersion() throws Exception {
-        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithValidResultFromArtifactory();
+        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
         final VersionPolicyResult releaseVersion = subjectUnderTest.getReleaseVersion(null);
         assertThat(releaseVersion.getVersion()).isEqualTo("1.5.7");
     }
 
     @Test
+    public void shouldRestartWithZeroForNewMajorOrMinorSNAPSHOT() throws VersionParseException, PolicyException {
+        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
+        subjectUnderTest.mavenProject.setVersion("1.6-SNAPSHOT");
+        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("1.6.0");
+        subjectUnderTest.mavenProject.setVersion("2-SNAPSHOT");
+        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("2.0");
+        subjectUnderTest.mavenProject.setVersion("2.0-SNAPSHOT");
+        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("2.0.0");
+        subjectUnderTest.mavenProject.setVersion("1.0-SNAPSHOT");
+        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("1.5.7");
+        subjectUnderTest.mavenProject.setVersion("1.5.6-SNAPSHOT");
+        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("1.5.7");
+        subjectUnderTest.mavenProject.setVersion("1.5.7-SNAPSHOT");
+        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("1.5.7");
+    }
+
+    @Test
     public void testGetDevelopmentVersion() throws Exception {
-        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithValidResultFromArtifactory();
+        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
         final VersionPolicyResult releaseVersion = subjectUnderTest.getDevelopmentVersion(null);
         assertThat(releaseVersion.getVersion()).isEqualTo("1-SNAPSHOT");
     }
@@ -97,12 +115,22 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
         new ArtifactoryVersionPolicy();
     }
 
-    ArtifactoryVersionPolicy createArtifactoryVersionPolicyWithValidResultFromArtifactory() {
-        return new ArtifactoryVersionPolicy(createMavenProject()) {
-            @Override
-            InputStream getInputStream(URL url) throws IOException {
-                return new ByteArrayInputStream("1.5.6".getBytes(Charsets.UTF_8));
-            }
-        };
+    ArtifactoryVersionPolicy createArtifactoryVersionPolicyWithResultFromArtifactory(String releaseVersionFromArtifactory) {
+        return new ArtifactoryVersionPolicyStub(releaseVersionFromArtifactory);
+    }
+
+    private class ArtifactoryVersionPolicyStub extends ArtifactoryVersionPolicy {
+
+        private final String releaseVersionFromArtifactory;
+
+        public ArtifactoryVersionPolicyStub(String releaseVersionFromArtifactory) {
+            super(ArtifactoryVersionPolicyTest.this.createMavenProject());
+            this.releaseVersionFromArtifactory = releaseVersionFromArtifactory;
+        }
+
+        @Override
+        InputStream getInputStream(URL url) throws IOException {
+            return new ByteArrayInputStream(releaseVersionFromArtifactory.getBytes(Charsets.UTF_8));
+        }
     }
 }

@@ -21,6 +21,7 @@ import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
+import org.apache.maven.shared.release.versions.VersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.apache.maven.shared.utils.io.IOUtil;
 import org.codehaus.plexus.component.annotations.Component;
@@ -79,7 +80,13 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
             throw new PolicyException("Unable to access " + urlString, e);
         }
         final DefaultVersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
-        versionPolicyResult.setVersion(versionInfo.getNextVersion().getReleaseVersionString());
+        final VersionInfo nextVersion = versionInfo.getNextVersion();
+        final DefaultVersionInfo currentSnapshot = new DefaultVersionInfo(mavenProject.getVersion());
+        if (nextVersion.compareTo(currentSnapshot) < 0) {
+            versionPolicyResult.setVersion(currentSnapshot.getReleaseVersionString() + ".0");
+        } else {
+            versionPolicyResult.setVersion(nextVersion.getReleaseVersionString());
+        }
         return versionPolicyResult;
     }
 
