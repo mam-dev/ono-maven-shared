@@ -22,11 +22,24 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
 * [ArtifactoryVersionPolicy](src/main/java/net/oneandone/maven/shared/versionpolicies/ArtifactoryVersionPolicy.java)
   retrieves the number from Artifactory and sets the `releaseVersion` to the next number. The next 
   `developmentVersion` always stays the same until you change it yourself in the source. 
+* When your SNAPSHOT version is bigger than the latest release version in Artifactory, it restarts with 0.
+
+Latest deployed release is always **1.5.6**
+
+Development Version | Version of Next Release
+--------------------|-------------------
+  1.6-SNAPSHOT      |  1.6.0
+  2-SNAPSHOT        |  2.0
+  2.0-SNAPSHOT      |  2.0.0
+  1.5.6-SNAPSHOT    |  1.5.7
+  1.5.7-SNAPSHOT    |  1.5.7
+
 * Include shared library as `dependency` to `maven-release-plugin`.
 * Set `projectVersionPolicyId` to `ONOArtifactoryVersionPolicy`.
 * Optionally set:
  * `artifactory-version-policy-http`: Base-URL of Artifactory (without trailing slash, defaults to http://repo.jfrog.org/artifactory) 
  * `artifactory-version-policy-repositories`: Comma separated list of repositories to search (defaults to: repo1) 
+
 
 ```xml
     <project>

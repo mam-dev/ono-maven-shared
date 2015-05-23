@@ -18,7 +18,6 @@ package net.oneandone.maven.shared.versionpolicies;
 import com.google.common.base.Charsets;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
-import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.junit.Test;
 
@@ -28,7 +27,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static net.oneandone.maven.shared.versionpolicies.VersionPolicyAssertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -79,34 +78,32 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
     }
 
     @Test
-    public void testGetReleaseVersion() throws Exception {
+    public void shouldIncrementMinorWhenMajorOrMinorStaysBelowLastRelease() throws Exception {
         final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
-        final VersionPolicyResult releaseVersion = subjectUnderTest.getReleaseVersion(null);
-        assertThat(releaseVersion.getVersion()).isEqualTo("1.5.7");
+        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.5.7");
+        subjectUnderTest.mavenProject.setVersion("1.0-SNAPSHOT");
+        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.5.7");
+        subjectUnderTest.mavenProject.setVersion("1.5.6-SNAPSHOT");
+        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.5.7");
+        subjectUnderTest.mavenProject.setVersion("1.5.7-SNAPSHOT");
+        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.5.7");
     }
 
     @Test
     public void shouldRestartWithZeroForNewMajorOrMinorSNAPSHOT() throws VersionParseException, PolicyException {
         final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
         subjectUnderTest.mavenProject.setVersion("1.6-SNAPSHOT");
-        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("1.6.0");
+        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.6.0");
         subjectUnderTest.mavenProject.setVersion("2-SNAPSHOT");
-        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("2.0");
+        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("2.0");
         subjectUnderTest.mavenProject.setVersion("2.0-SNAPSHOT");
-        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("2.0.0");
-        subjectUnderTest.mavenProject.setVersion("1.0-SNAPSHOT");
-        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("1.5.7");
-        subjectUnderTest.mavenProject.setVersion("1.5.6-SNAPSHOT");
-        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("1.5.7");
-        subjectUnderTest.mavenProject.setVersion("1.5.7-SNAPSHOT");
-        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo("1.5.7");
+        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("2.0.0");
     }
 
     @Test
     public void testGetDevelopmentVersion() throws Exception {
         final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
-        final VersionPolicyResult releaseVersion = subjectUnderTest.getDevelopmentVersion(null);
-        assertThat(releaseVersion.getVersion()).isEqualTo("1-SNAPSHOT");
+        assertThat(subjectUnderTest).developmentVersionCorrespondsTo("1-SNAPSHOT");
     }
 
     // Almost useless but good for line and instruction coverage.

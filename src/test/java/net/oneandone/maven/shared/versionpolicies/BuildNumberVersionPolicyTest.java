@@ -17,14 +17,13 @@ package net.oneandone.maven.shared.versionpolicies;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
-import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static net.oneandone.maven.shared.versionpolicies.VersionPolicyAssertions.assertThat;
 
 public class BuildNumberVersionPolicyTest extends AbstractVersionPolicyTest {
 
@@ -55,8 +54,7 @@ public class BuildNumberVersionPolicyTest extends AbstractVersionPolicyTest {
         Map<String, String> systemEnv = new HashMap<>();
         systemEnv.put("BUILD_NUMBER", "5");
         final BuildNumberVersionPolicy subjectUnderTest = new BuildNumberVersionPolicy(createMavenProject(), systemEnv);
-        final VersionPolicyResult developmentVersion = subjectUnderTest.getDevelopmentVersion(null);
-        assertThat(developmentVersion.getVersion()).isEqualTo("1-SNAPSHOT");
+        assertThat(subjectUnderTest).developmentVersionCorrespondsTo("1-SNAPSHOT");
     }
 
     // Almost useless but good for line and instruction coverage.
@@ -69,9 +67,9 @@ public class BuildNumberVersionPolicyTest extends AbstractVersionPolicyTest {
         final Map<String, String> systemEnv = new HashMap<>();
         final BuildNumberVersionPolicy subjectUnderTest = new BuildNumberVersionPolicy(mavenProject, systemEnv);
         systemEnv.put(buildNumberIdentifier, "5");
-        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo(stem + ".5");
+        assertThat(subjectUnderTest).releaseVersionCorrespondsTo(stem + ".5");
         systemEnv.put(buildNumberIdentifier, "6");
-        assertThat(subjectUnderTest.getReleaseVersion(null).getVersion()).isEqualTo(stem + ".6");
+        assertThat(subjectUnderTest).releaseVersionCorrespondsTo(stem + ".6");
     }
 
 }
