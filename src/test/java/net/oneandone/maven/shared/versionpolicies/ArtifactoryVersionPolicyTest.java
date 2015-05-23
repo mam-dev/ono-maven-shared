@@ -15,7 +15,6 @@
  */
 package net.oneandone.maven.shared.versionpolicies;
 
-import com.google.common.base.Charsets;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.versions.VersionParseException;
@@ -127,7 +126,7 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
 
         @Override
         InputStream getInputStream(URL url) throws IOException {
-            return new ByteArrayInputStream(releaseVersionFromArtifactory.getBytes(Charsets.UTF_8));
+            return new ByteArrayInputStream(releaseVersionFromArtifactory.getBytes("UTF-8"));
         }
     }
 }
