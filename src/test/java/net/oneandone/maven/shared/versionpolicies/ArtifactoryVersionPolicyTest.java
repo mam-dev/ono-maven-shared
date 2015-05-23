@@ -79,6 +79,7 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
     @Test
     public void shouldIncrementMinorWhenMajorOrMinorStaysBelowLastRelease() throws Exception {
         final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
+        subjectUnderTest.mavenProject.setVersion("1-SNAPSHOT");
         assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.5.7");
         subjectUnderTest.mavenProject.setVersion("1.0-SNAPSHOT");
         assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.5.7");

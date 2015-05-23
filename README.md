@@ -28,11 +28,13 @@ Latest deployed release is always **1.5.6**
 
 Development Version | Version of Next Release
 --------------------|-------------------
+  1-SNAPSHOT        |  1.5.7
+  1.0-SNAPSHOT      |  1.5.7
+  1.5.6-SNAPSHOT    |  1.5.7
+  1.5.7-SNAPSHOT    |  1.5.7
   1.6-SNAPSHOT      |  1.6.0
   2-SNAPSHOT        |  2.0
   2.0-SNAPSHOT      |  2.0.0
-  1.5.6-SNAPSHOT    |  1.5.7
-  1.5.7-SNAPSHOT    |  1.5.7
 
 * Include shared library as `dependency` to `maven-release-plugin`.
 * Set `projectVersionPolicyId` to `ONOArtifactoryVersionPolicy`.
