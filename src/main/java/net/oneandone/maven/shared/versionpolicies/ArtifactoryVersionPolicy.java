@@ -58,6 +58,8 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
 
     String artifactoryRepositories;
 
+    private String currentVersion;
+
     // For injection.
     public ArtifactoryVersionPolicy() {}
 
@@ -69,7 +71,6 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
-        final String currentVersion;
         final String urlString = createUrlString();
         try {
             final URL url = new URL(urlString);
@@ -109,5 +110,9 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
 
     InputStream getInputStream(URL url) throws IOException {
         return url.openStream();
+    }
+
+    public String getCurrentVersion() {
+        return currentVersion;
     }
 }

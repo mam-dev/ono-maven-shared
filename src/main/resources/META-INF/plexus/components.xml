@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component-set>
+  <components>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>maven-release-manager-input-variables</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.InputVariablesPhase</implementation>
+      <requirements>
+        <requirement>
+          <role>org.codehaus.plexus.components.interactivity.Prompter</role>
+          <field-name>prompter</field-name>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+          <field-name>scmRepositoryConfigurator</field-name>
+        </requirement>
+      </requirements>
+    </component>
+  </components>
+</component-set>

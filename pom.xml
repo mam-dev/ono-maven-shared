@@ -169,7 +169,7 @@
                 <version>1.5.5</version>
                 <executions>
                     <execution>
-                        <id>process-classes</id>
+                        <id>default-generate-metadata</id>
                         <goals>
                             <goal>generate-metadata</goal>
                         </goals>
