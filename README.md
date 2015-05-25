@@ -23,6 +23,8 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
   retrieves the number from Artifactory and sets the `releaseVersion` to the next number. The next 
   `developmentVersion` always stays the same until you change it yourself in the source. 
 * When your SNAPSHOT version is bigger than the latest release version in Artifactory, it restarts with 0.
+* Additionally the [maven-release-plugin arguments](http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#arguments) are extended with `-DONOArtifactoryVersionPolicy.latest=LATEST_FOUND_RELEASE`.
+
 
 Latest deployed release is always **1.5.6**
 
@@ -61,7 +63,7 @@ Development Version | Version of Next Release
                 <dependency>
                     <groupId>net.oneandone.maven</groupId>
                     <artifactId>ono-maven-shared</artifactId>
-                    <version>0.X</version>
+                    <version>2.X</version>
                 </dependency>
             </dependencies>
         </plugin>
