@@ -16,24 +16,27 @@
 package net.oneandone.maven.shared.versionpolicies
 
 import org.apache.maven.project.MavenProject
+import org.apache.maven.shared.release.policy.PolicyException
 import spock.lang.Specification
+import spock.lang.Unroll
 
-@Mixin(AbstractVersionPolicyTrait)
-class ArtifactoryVersionPolicy2Test extends Specification {
+class ArtifactoryVersionPolicy2Test extends Specification implements AbstractVersionPolicyTrait {
 
     def mavenProject = createMavenProject();
 
-    def 'should increment minor when major or minor stays below or equals last release'() {
+    @Unroll
+    def 'should increment minor when major or minor stays below or equals last release  #mavenVersion -> #releaseVersion'() {
 
         given:
-        def versionPolicy = new ArtifactoryVersionPolicyStub(mavenProject, '1.5.6');
+        def subjectUnderTest = new ArtifactoryVersionPolicyStub(mavenProject, '1.5.6');
 
         when:
         mavenProject.version = mavenVersion
 
         then:
-        versionPolicy.getReleaseVersion(null).version == releaseVersion
-        versionPolicy.getDevelopmentVersion(null).version == mavenVersion
+        subjectUnderTest.getReleaseVersion(null).version == releaseVersion
+        subjectUnderTest.getDevelopmentVersion(null).version == mavenVersion
+        subjectUnderTest.getCurrentVersion() == '1.5.6'
 
         where:
         mavenVersion     | releaseVersion
@@ -43,17 +46,19 @@ class ArtifactoryVersionPolicy2Test extends Specification {
         '1.5.7-SNAPSHOT' |  '1.5.7'
     }
 
-    def 'should restart with zero for new major or minor SNAPSHOT'() {
+    @Unroll
+    def 'should restart with zero for new major or minor SNAPSHOT #mavenVersion -> #releaseVersion'() {
 
         given:
-        def versionPolicy = new ArtifactoryVersionPolicyStub(mavenProject, '1.5.6');
+        def subjectUnderTest = new ArtifactoryVersionPolicyStub(mavenProject, '1.5.6');
 
         when:
         mavenProject.version = mavenVersion
 
         then:
-        versionPolicy.getReleaseVersion(null).version == releaseVersion
-        versionPolicy.getDevelopmentVersion(null).version == mavenVersion
+        subjectUnderTest.getReleaseVersion(null).version == releaseVersion
+        subjectUnderTest.getDevelopmentVersion(null).version == mavenVersion
+        subjectUnderTest.getCurrentVersion() == '1.5.6'
 
         where:
         mavenVersion     | releaseVersion
@@ -61,6 +66,44 @@ class ArtifactoryVersionPolicy2Test extends Specification {
         '2-SNAPSHOT'     |  '2.0'
         '2.0-SNAPSHOT'   |  '2.0.0'
     }
+
+    def 'should throw when URL could not be opened'() {
+        given:
+        def subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject()) {
+            @Override
+            def InputStream getInputStream(URL url) throws IOException {
+                throw new IOException("Could not open")
+            }
+        }
+
+        when:
+        subjectUnderTest.getReleaseVersion(null)
+
+        then:
+        thrown(PolicyException)
+    }
+
+/*
+    def 'should throw when URL could not be read'() {
+        given:
+        def mockedStream = Mockito.mock(InputStream) {
+            Mockito.when(read(*_)).thenThrow(new IOException("VP could not read"))
+        }
+        def subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject()) {
+            @Override
+            def InputStream getInputStream(URL url) throws IOException {
+                return mockedStream
+            }
+        }
+
+        when:
+        subjectUnderTest.getReleaseVersion(null)
+
+        then:
+        thrown(PolicyException)
+    }
+*/
+
     static class ArtifactoryVersionPolicyStub extends ArtifactoryVersionPolicy {
 
         private final String releaseVersionFromArtifactory;

@@ -17,7 +17,7 @@ package net.oneandone.maven.shared.versionpolicies;
 
 import org.apache.maven.project.MavenProject;
 
-class AbstractVersionPolicyTrait {
+trait AbstractVersionPolicyTrait {
     MavenProject createMavenProject() {
         final MavenProject project = new MavenProject();
         project.setGroupId("net.oneandone.maven.poms");
