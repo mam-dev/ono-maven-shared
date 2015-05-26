@@ -18,6 +18,7 @@ package net.oneandone.maven.shared.versionpolicies;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.versions.VersionParseException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -74,30 +75,6 @@ public class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTest {
         final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
         assertThat(subjectUnderTest.createUrlString()).isEqualTo(
                 "http://repo.jfrog.org/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=repo1");
-    }
-
-    @Test
-    public void shouldIncrementMinorWhenMajorOrMinorStaysBelowLastRelease() throws Exception {
-        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
-        subjectUnderTest.mavenProject.setVersion("1-SNAPSHOT");
-        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.5.7");
-        subjectUnderTest.mavenProject.setVersion("1.0-SNAPSHOT");
-        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.5.7");
-        subjectUnderTest.mavenProject.setVersion("1.5.6-SNAPSHOT");
-        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.5.7");
-        subjectUnderTest.mavenProject.setVersion("1.5.7-SNAPSHOT");
-        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.5.7");
-    }
-
-    @Test
-    public void shouldRestartWithZeroForNewMajorOrMinorSNAPSHOT() throws VersionParseException, PolicyException {
-        final ArtifactoryVersionPolicy subjectUnderTest = createArtifactoryVersionPolicyWithResultFromArtifactory("1.5.6");
-        subjectUnderTest.mavenProject.setVersion("1.6-SNAPSHOT");
-        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("1.6.0");
-        subjectUnderTest.mavenProject.setVersion("2-SNAPSHOT");
-        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("2.0");
-        subjectUnderTest.mavenProject.setVersion("2.0-SNAPSHOT");
-        assertThat(subjectUnderTest).releaseVersionCorrespondsTo("2.0.0");
     }
 
     @Test
