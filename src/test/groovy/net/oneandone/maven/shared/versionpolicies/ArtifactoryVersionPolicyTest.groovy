@@ -17,13 +17,10 @@ package net.oneandone.maven.shared.versionpolicies
 
 import org.apache.maven.project.MavenProject
 import org.apache.maven.shared.release.policy.PolicyException
-import org.apache.maven.shared.release.policy.version.VersionPolicyRequest
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class ArtifactoryVersionPolicyTest extends Specification implements AbstractVersionPolicyTrait {
-
-    static VersionPolicyRequest DOES_NOT_MATTER = new VersionPolicyRequest();
 
     def mavenProject = createMavenProject();
 
@@ -36,8 +33,8 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
         mavenProject.version = mavenVersion
 
         then:
-        subjectUnderTest.getReleaseVersion(DOES_NOT_MATTER).version == releaseVersion
-        subjectUnderTest.getDevelopmentVersion(DOES_NOT_MATTER).version == mavenVersion
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version == releaseVersion
+        subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER).version == mavenVersion
         subjectUnderTest.getCurrentVersion() == '1.5.6'
 
         where:
@@ -57,8 +54,8 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
         mavenProject.version = mavenVersion
 
         then:
-        subjectUnderTest.getReleaseVersion(DOES_NOT_MATTER).version == releaseVersion
-        subjectUnderTest.getDevelopmentVersion(DOES_NOT_MATTER).version == mavenVersion
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version == releaseVersion
+        subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER).version == mavenVersion
         subjectUnderTest.getCurrentVersion() == '1.5.6'
 
         where:
@@ -78,7 +75,7 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
         }
 
         when:
-        subjectUnderTest.getReleaseVersion(DOES_NOT_MATTER)
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER)
 
         then:
         PolicyException e = thrown()
@@ -97,7 +94,7 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
         }
 
         when:
-        subjectUnderTest.getReleaseVersion(DOES_NOT_MATTER)
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER)
 
         then:
         PolicyException e = thrown()

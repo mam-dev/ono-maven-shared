@@ -15,9 +15,13 @@
  */
 package net.oneandone.maven.shared.versionpolicies;
 
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProject
+import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 
 trait AbstractVersionPolicyTrait {
+
+    static VersionPolicyRequest VPR_DOES_NOT_MATTER = new VersionPolicyRequest()
+
     MavenProject createMavenProject() {
         final MavenProject project = new MavenProject();
         project.setGroupId("net.oneandone.maven.poms");
