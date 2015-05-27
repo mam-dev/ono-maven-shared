@@ -23,11 +23,6 @@ trait AbstractVersionPolicyTrait {
     static VersionPolicyRequest VPR_DOES_NOT_MATTER = new VersionPolicyRequest()
 
     MavenProject createMavenProject() {
-        final MavenProject project = new MavenProject();
-        project.setGroupId("net.oneandone.maven.poms");
-        project.setArtifactId("foss-parent");
-        project.setVersion("1-SNAPSHOT");
-        return project;
+        return new MavenProject(groupId: "net.oneandone.maven.poms", artifactId: "foss-parent", version: "1-SNAPSHOT");
     }
-
 }
