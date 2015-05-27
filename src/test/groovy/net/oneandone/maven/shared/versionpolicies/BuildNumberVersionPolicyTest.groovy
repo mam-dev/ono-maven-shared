@@ -65,6 +65,7 @@ public class BuildNumberVersionPolicyTest extends Specification implements Abstr
 
     def 'Has a default constructor used with injection in Maven'() {
         given:
+        @Subject
         def subjectUnderTest = new BuildNumberVersionPolicy()
 
         expect:
