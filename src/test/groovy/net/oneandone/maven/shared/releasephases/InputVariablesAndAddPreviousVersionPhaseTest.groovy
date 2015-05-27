@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.oneandone.maven.shared.releasephases;
+package net.oneandone.maven.shared.releasephases
 
-import net.oneandone.maven.shared.versionpolicies.ArtifactoryVersionPolicy;
-import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.ReleaseFailureException;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.apache.maven.shared.release.phase.ReleasePhase;
-import org.apache.maven.shared.release.policy.version.VersionPolicy;
-import org.junit.Test
+import net.oneandone.maven.shared.versionpolicies.ArtifactoryVersionPolicy
+import org.apache.maven.shared.release.config.ReleaseDescriptor
+import org.apache.maven.shared.release.env.ReleaseEnvironment
+import org.apache.maven.shared.release.phase.ReleasePhase
 import spock.lang.Specification
-import spock.lang.Subject;
-
-import java.util.HashMap;
-
-import static org.assertj.core.api.Assertions.assertThat
-import static org.assertj.core.api.Assertions.extractProperty;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import spock.lang.Subject
 
 class InputVariablesAndAddPreviousVersionPhaseTest extends Specification {
 
