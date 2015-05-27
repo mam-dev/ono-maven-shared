@@ -119,6 +119,7 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
 
     def 'Has a default constructor used with injection in Maven'() {
         given:
+        @Subject
         def subjectUnderTest = new ArtifactoryVersionPolicy()
 
         expect:
