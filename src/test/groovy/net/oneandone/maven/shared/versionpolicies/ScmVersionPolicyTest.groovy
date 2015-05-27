@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.oneandone.maven.shared.versionpolicies;
+package net.oneandone.maven.shared.versionpolicies
 
-import org.junit.Test;
+import spock.lang.Specification
+import spock.lang.Subject
 
-import static org.assertj.core.api.Assertions.assertThat;
+class ScmVersionPolicyTest extends Specification implements AbstractVersionPolicyTrait {
+    @Subject
+    def subjectUnderTest = new ScmVersionPolicy();
 
-public class ScmVersionPolicyTest {
 
-    @Test
-    public void testGetReleaseVersion() throws Exception {
-        final ScmVersionPolicy subjectUnderTest = new ScmVersionPolicy();
-        assertThat(subjectUnderTest.getReleaseVersion(null)).isNull();
+    def testGetReleaseVersion() {
+        expect:
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER) is null
     }
 
-    @Test
-    public void testGetDevelopmentVersion() throws Exception {
-        final ScmVersionPolicy subjectUnderTest = new ScmVersionPolicy();
-        assertThat(subjectUnderTest.getDevelopmentVersion(null)).isNull();
+    def testGetDevelopmentVersion() throws Exception {
+        expect:
+        subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER) is null
     }
 }
