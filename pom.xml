@@ -103,6 +103,12 @@
                 <artifactId>aether-util</artifactId>
                 <version>1.0.2.v20150114</version>
             </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+                <version>2.4.3</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -148,6 +154,10 @@
             <artifactId>spock-core</artifactId>
             <version>1.0-groovy-2.4</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
         </dependency>
         <dependency>
             <!-- used by spock for mocking classes during runtime -->
