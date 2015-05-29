@@ -24,7 +24,7 @@ import spock.lang.Subject
 
 class InputVariablesAndAddPreviousVersionPhaseTest extends Specification {
 
-    final def mockedInputVariablesPhase = Mock(ReleasePhase.class);
+    final def mockedInputVariablesPhase = Mock(ReleasePhase)
     final def versionPolicies = new HashMap<>();
 
     @Subject
