@@ -37,4 +37,19 @@ class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersio
         newVersionInfo > oldVersionInfo
     }
 
+    def 'No version found at Artifactory, i.e. first release'() {
+        given:
+        subjectUnderTest.mavenProject.artifactId = 'unknown-artifact-id-i-do-not-exist'
+        subjectUnderTest.mavenProject.version = '1.0-SNAPSHOT'
+
+        when:
+        def version = subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version
+        def newSnapshotVersion = subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER).version
+        def newVersionInfo = new DefaultVersionInfo(version);
+
+        then:
+        newSnapshotVersion == subjectUnderTest.mavenProject.version
+        ! newVersionInfo.isSnapshot()
+        newVersionInfo.releaseVersionString == '1.0.0'
+    }
 }

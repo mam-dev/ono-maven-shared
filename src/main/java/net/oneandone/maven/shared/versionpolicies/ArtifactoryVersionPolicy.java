@@ -27,6 +27,7 @@ import org.apache.maven.shared.utils.io.IOUtil;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -74,15 +75,17 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
         final String urlString = createUrlString();
         try {
             final URL url = new URL(urlString);
-            try(final InputStream stream = getInputStream(url)) {
+            try (final InputStream stream = getInputStream(url)) {
                 currentVersion = IOUtil.toString(stream, "UTF-8");
             }
+        } catch (FileNotFoundException e) {
+            currentVersion = "0"; //mavenProject.getVersion().replace("-SNAPSHOT", "");
         } catch (IOException e) {
             throw new PolicyException("Unable to access " + urlString, e);
         }
-        final DefaultVersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
+        final VersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
         final VersionInfo nextVersion = versionInfo.getNextVersion();
-        final DefaultVersionInfo currentSnapshot = new DefaultVersionInfo(mavenProject.getVersion());
+        final VersionInfo currentSnapshot = new DefaultVersionInfo(mavenProject.getVersion());
         if (nextVersion.compareTo(currentSnapshot) < 0) {
             versionPolicyResult.setVersion(currentSnapshot.getReleaseVersionString() + ".0");
         } else {

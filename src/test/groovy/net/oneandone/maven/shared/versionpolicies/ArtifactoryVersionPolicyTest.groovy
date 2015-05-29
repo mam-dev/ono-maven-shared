@@ -30,43 +30,70 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
     @Subject
     def subjectUnderTest = new ArtifactoryVersionPolicyStub(mavenProject, LATEST_VERSION_FROM_ARTIFACTORY);
 
-    @Unroll('Increments minor when major or minor stays below or equals latest release  #mavenVersion -> #releaseVersion')
-    def 'increments version'(def mavenVersion, def releaseVersion) {
+    @Unroll('Increments minor when major or minor stays below or equals latest release  #snapshotVersion -> #releaseVersion')
+    def 'increments version'(def snapshotVersion, def releaseVersion) {
         when:
-        mavenProject.version = mavenVersion
+        mavenProject.version = snapshotVersion
 
         then:
         subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version == releaseVersion
-        subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER).version == mavenVersion
+        subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER).version == snapshotVersion
         subjectUnderTest.currentVersion == LATEST_VERSION_FROM_ARTIFACTORY
 
         where:
-        mavenVersion     | releaseVersion
+        snapshotVersion  | releaseVersion
         '1-SNAPSHOT'     | '1.5.7'
         '1.0-SNAPSHOT'   | '1.5.7'
         '1.5.6-SNAPSHOT' | '1.5.7'
         '1.5.7-SNAPSHOT' | '1.5.7'
     }
 
-    @Unroll('Restarts with zero for new major or minor SNAPSHOT #mavenVersion -> #releaseVersion')
-    def 'restarts with zero'(def mavenVersion, def releaseVersion) {
+    @Unroll('Restarts with zero for new major or minor SNAPSHOT #snapshotVersion -> #releaseVersion')
+    def 'restarts with zero'(def snapshotVersion, def releaseVersion) {
         when:
-        mavenProject.version = mavenVersion
+        mavenProject.version = snapshotVersion
 
         then:
         subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version == releaseVersion
-        subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER).version == mavenVersion
+        subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER).version == snapshotVersion
         subjectUnderTest.currentVersion == LATEST_VERSION_FROM_ARTIFACTORY
 
         where:
-        mavenVersion   | releaseVersion
-        '1.6-SNAPSHOT' | '1.6.0'
-        '2-SNAPSHOT'   | '2.0'
-        '2.0-SNAPSHOT' | '2.0.0'
+        snapshotVersion | releaseVersion
+        '1.6-SNAPSHOT'  | '1.6.0'
+        '2-SNAPSHOT'    | '2.0'
+        '2.0-SNAPSHOT'  | '2.0.0'
+    }
+
+    @Unroll('Handles new artifacts #snapShotVersion -> #releaseVersion')
+    def 'handles new artifacts'(def snapShotVersion, def releaseVersion, def currentVersion) {
+        given:
+        def mavenProject = createMavenProject();
+        @Subject
+        def subjectUnderTest = new ArtifactoryVersionPolicy(mavenProject) {
+            @Override
+            def InputStream getInputStream(URL url) throws IOException {
+                throw new FileNotFoundException("HTTP/1.1 404 Not Found")
+            }
+        }
+        mavenProject.version = snapShotVersion
+
+        expect:
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version == releaseVersion
+        subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER).version == snapShotVersion
+        subjectUnderTest.currentVersion == currentVersion
+
+        where:
+        snapShotVersion | releaseVersion | currentVersion
+        '1.6-SNAPSHOT'  | '1.6.0'        | '0'
+        '2-SNAPSHOT'    | '2.0'          | '0'
+        '2.0-SNAPSHOT'  | '2.0.0'        | '0'
+
     }
 
     def 'Throws when Artifactory URL could not be opened'() {
         given:
+        @Subject
         def subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject()) {
             @Override
             def InputStream getInputStream(URL url) throws IOException {
