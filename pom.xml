@@ -15,6 +15,13 @@
     <name>1-and-1 :: FOSS Libraries useable by Apache Maven</name>
     <description>Additional policies for use with the maven-release-plugin.</description>
     <inceptionYear>2015</inceptionYear>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <scm>
         <connection>scm:git:git://github.com/1and1/ono-maven-shared.git</connection>
