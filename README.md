@@ -25,6 +25,7 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
 * When your SNAPSHOT version is bigger than the latest release version in Artifactory, it restarts with 0.
 * Additionally the [maven-release-plugin arguments](http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#arguments)
   are extended with `-DONOArtifactoryVersionPolicy.latest=LATEST_FOUND_RELEASE`.
+* As of version 2.3, read protected Artifactory repositories are **not** supported. 
 
 ### Behaviour when the Artifact already exists
 
