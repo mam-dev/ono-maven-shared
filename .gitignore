@@ -107,3 +107,4 @@ nb-configuration.xml
 .nb-gradle/
 
 
+.flattened-pom.xml
