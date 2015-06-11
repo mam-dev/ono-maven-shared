@@ -138,11 +138,12 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
 
     def 'Picks up properties for Artifactory'() {
         given:
+        def stubServer = new Server(
+            id: 'private-repo',
+            username: 'username',
+            password: 'password'
+        )
         def stubSettings = new Settings()
-        def stubServer = new Server()
-        stubServer.id = 'private-repo'
-        stubServer.username = 'username'
-        stubServer.password = 'password'
         stubSettings.addServer(stubServer)
         def mavenProject = getMavenProject()
         @Subject
