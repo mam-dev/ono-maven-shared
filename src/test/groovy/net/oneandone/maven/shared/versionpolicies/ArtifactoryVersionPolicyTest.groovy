@@ -16,6 +16,8 @@
 package net.oneandone.maven.shared.versionpolicies
 
 import org.apache.maven.project.MavenProject
+import org.apache.maven.settings.Server
+import org.apache.maven.settings.Settings
 import org.apache.maven.shared.release.policy.PolicyException
 import spock.lang.Specification
 import spock.lang.Subject
@@ -28,7 +30,7 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
     def mavenProject = createMavenProject();
 
     @Subject
-    def subjectUnderTest = new ArtifactoryVersionPolicyStub(mavenProject, LATEST_VERSION_FROM_ARTIFACTORY);
+    def subjectUnderTest = new ArtifactoryVersionPolicyStub(mavenProject, null, LATEST_VERSION_FROM_ARTIFACTORY);
 
     @Unroll('Increments minor when major or minor stays below or equals latest release  #snapshotVersion -> #releaseVersion')
     def 'increments version'(def snapshotVersion, def releaseVersion) {
@@ -70,7 +72,7 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
         given:
         def mavenProject = createMavenProject();
         @Subject
-        def subjectUnderTest = new ArtifactoryVersionPolicy(mavenProject) {
+        def subjectUnderTest = new ArtifactoryVersionPolicy(mavenProject, null) {
             @Override
             def InputStream getInputStream(URL url) throws IOException {
                 throw new FileNotFoundException("HTTP/1.1 404 Not Found")
@@ -94,7 +96,7 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
     def 'Throws when Artifactory URL could not be opened'() {
         given:
         @Subject
-        def subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject()) {
+        def subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject(), null) {
             @Override
             def InputStream getInputStream(URL url) throws IOException {
                 throw new IOException("Could not open")
@@ -114,7 +116,7 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
         def mockedStream = Mock(InputStream)
         mockedStream.read(*_) >> { throw new IOException("VP could not read") }
         @Subject
-        def subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject()) {
+        def subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject(), null) {
             @Override
             def InputStream getInputStream(URL url) throws IOException {
                 return mockedStream
@@ -144,6 +146,31 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
         subjectUnderTest.createUrlString() == 'http://artifactory.example.com/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=first-repo,second-repo'
     }
 
+    def 'Picks up server-id properties for Artifactory'() {
+        given:
+        def stubSettings = new Settings()
+        def stubServer = new Server()
+        stubServer.id = 'private-repo'
+        stubServer.username = 'username'
+        stubServer.password = 'password'
+        stubSettings.addServer(stubServer)
+        def mavenProject = getMavenProject()
+        @Subject
+        def subjectUnderTest = new ArtifactoryVersionPolicyStub(mavenProject, stubSettings, '1.5.6')
+
+        when:
+        def properties = mavenProject.getProperties();
+        properties['artifactory-version-policy-server-id'] = 'private-repo'
+        def urlString = subjectUnderTest.createUrlString()
+        def connection = subjectUnderTest.getHttpURLConnection(new URL(urlString))
+
+        then:
+        connection.requests.headers['Authorization'][0] == 'Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+
+        cleanup:
+        connection.disconnect()
+    }
+
     def 'Has a default constructor used with injection in Maven'() {
         given:
         @Subject
@@ -157,8 +184,8 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
 
         private final String releaseVersionFromArtifactory;
 
-        public ArtifactoryVersionPolicyStub(MavenProject mavenProject, String releaseVersionFromArtifactory) {
-            super(mavenProject);
+        public ArtifactoryVersionPolicyStub(MavenProject mavenProject, Settings settings, String releaseVersionFromArtifactory) {
+            super(mavenProject, settings);
             this.releaseVersionFromArtifactory = releaseVersionFromArtifactory;
         }
 

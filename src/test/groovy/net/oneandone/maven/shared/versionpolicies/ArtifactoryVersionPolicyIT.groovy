@@ -22,7 +22,7 @@ import spock.lang.Subject
 class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersionPolicyTrait {
 
     @Subject
-    def subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject());
+    def subjectUnderTest = new ArtifactoryVersionPolicy(createMavenProject(), null);
 
     def 'New foss-parent version should always be bigger then 1.5.6'() {
         given:

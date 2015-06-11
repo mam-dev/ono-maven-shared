@@ -16,6 +16,8 @@
 package net.oneandone.maven.shared.versionpolicies;
 
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
@@ -26,10 +28,12 @@ import org.apache.maven.shared.release.versions.VersionParseException;
 import org.apache.maven.shared.utils.io.IOUtil;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.util.Base64;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
@@ -52,12 +56,19 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
 
     static final String ARTIFACTORY_VERSION_POLICY_REPOSITORIES = "artifactory-version-policy-repositories";
 
+    static final String ARTIFACTORY_VERSION_POLICY_SERVER_ID = "artifactory-version-policy-server-id";
+
     @Requirement
     MavenProject mavenProject;
+
+    @Requirement
+    Settings settings;
 
     String httpArtifactory;
 
     String artifactoryRepositories;
+
+    String serverId;
 
     private String currentVersion;
 
@@ -65,8 +76,9 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     public ArtifactoryVersionPolicy() {}
 
     // Just for tests
-    ArtifactoryVersionPolicy(MavenProject mavenProject) {
+    ArtifactoryVersionPolicy(MavenProject mavenProject, Settings settings) {
         this.mavenProject = mavenProject;
+        this.settings = settings;
     }
 
     @Override
@@ -105,6 +117,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
         final Properties properties = mavenProject.getProperties();
         httpArtifactory = properties.getProperty(ARTIFACTORY_VERSION_POLICY_API, HTTP_ARTIFACTORY);
         artifactoryRepositories = properties.getProperty(ARTIFACTORY_VERSION_POLICY_REPOSITORIES, REPOSITORIES);
+        serverId = properties.getProperty(ARTIFACTORY_VERSION_POLICY_SERVER_ID, "");
         return String.format(
                         Locale.ENGLISH,
                         httpArtifactory + "/api/search/latestVersion?g=%s&a=%s&repos=%s",
@@ -112,7 +125,21 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     }
 
     InputStream getInputStream(URL url) throws IOException {
-        return url.openStream();
+        final HttpURLConnection connection = getHttpURLConnection(url);
+        return connection.getInputStream();
+    }
+
+    HttpURLConnection getHttpURLConnection(URL url) throws IOException {
+        final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        if (!serverId.equals("")) {
+            final Server server = settings.getServer(serverId);
+            final String username = server.getUsername();
+            final String password = server.getPassword();
+            final String s = username + ":" + password;
+            final String auth = new String(Base64.encodeBase64(s.getBytes("UTF-8")), "UTF-8");
+            connection.setRequestProperty("Authorization", "Basic " + auth);
+        }
+        return connection;
     }
 
     public String getCurrentVersion() {
