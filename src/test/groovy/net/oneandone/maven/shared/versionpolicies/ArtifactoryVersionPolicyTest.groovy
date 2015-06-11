@@ -136,17 +136,7 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
         subjectUnderTest.createUrlString() == 'http://repo.jfrog.org/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=repo1'
     }
 
-    def 'Picks up properties for Artifactory URL and repositories'() {
-        when:
-        def properties = mavenProject.getProperties();
-        properties['artifactory-version-policy-http'] = 'http://artifactory.example.com/artifactory'
-        properties['artifactory-version-policy-repositories'] = 'first-repo,second-repo'
-
-        then:
-        subjectUnderTest.createUrlString() == 'http://artifactory.example.com/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=first-repo,second-repo'
-    }
-
-    def 'Picks up server-id properties for Artifactory'() {
+    def 'Picks up properties for Artifactory'() {
         given:
         def stubSettings = new Settings()
         def stubServer = new Server()
@@ -160,11 +150,14 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
 
         when:
         def properties = mavenProject.getProperties();
+        properties['artifactory-version-policy-http'] = 'http://artifactory.example.com/artifactory'
         properties['artifactory-version-policy-server-id'] = 'private-repo'
+        properties['artifactory-version-policy-repositories'] = 'first-repo,second-repo'
         def urlString = subjectUnderTest.createUrlString()
         def connection = subjectUnderTest.getHttpURLConnection(new URL(urlString))
 
         then:
+        urlString == 'http://artifactory.example.com/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=first-repo,second-repo'
         connection.requests.headers['Authorization'][0] == 'Basic dXNlcm5hbWU6cGFzc3dvcmQ='
 
         cleanup:

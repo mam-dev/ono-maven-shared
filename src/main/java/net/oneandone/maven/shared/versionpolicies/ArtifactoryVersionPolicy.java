@@ -131,7 +131,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
 
     HttpURLConnection getHttpURLConnection(URL url) throws IOException {
         final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        if (!serverId.equals("")) {
+        if (!"".equals(serverId)) {
             final Server server = settings.getServer(serverId);
             final String username = server.getUsername();
             final String password = server.getPassword();
