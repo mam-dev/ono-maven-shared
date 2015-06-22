@@ -26,7 +26,8 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
 * Additionally the [maven-release-plugin arguments](http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#arguments)
   are extended with `-DONOArtifactoryVersionPolicy.latest=LATEST_FOUND_RELEASE`.
 * As of version 2.4, you may provide a property `artifactory-version-policy-server-id` which is used for
-  retrieving your credentials from `~/.m2/settings.xml`.
+  retrieving your credentials from `~/.m2/settings.xml`. This only works with plain text or 
+  [centrally secure passwords](https://www.jfrog.com/confluence/display/RTF/Centrally+Secure+Passwords).
 
 ### Behaviour when the Artifact already exists
 

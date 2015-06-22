@@ -16,9 +16,5 @@
         </requirement>
       </requirements>
     </component>
-    <component>
-      <role>org.apache.maven.settings.Settings</role>
-      <implementation>org.apache.maven.settings.Settings</implementation>
-    </component>
   </components>
 </component-set>

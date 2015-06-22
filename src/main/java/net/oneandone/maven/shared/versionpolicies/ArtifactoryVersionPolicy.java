@@ -15,9 +15,9 @@
  */
 package net.oneandone.maven.shared.versionpolicies;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Server;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
@@ -62,7 +62,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     MavenProject mavenProject;
 
     @Requirement
-    Settings settings;
+    MavenSession mavenSession;
 
     String httpArtifactory;
 
@@ -76,9 +76,9 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     public ArtifactoryVersionPolicy() {}
 
     // Just for tests
-    ArtifactoryVersionPolicy(MavenProject mavenProject, Settings settings) {
+    ArtifactoryVersionPolicy(MavenProject mavenProject, MavenSession mavenSession) {
         this.mavenProject = mavenProject;
-        this.settings = settings;
+        this.mavenSession = mavenSession;
     }
 
     @Override
@@ -132,7 +132,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
     HttpURLConnection getHttpURLConnection(URL url) throws IOException {
         final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         if (!"".equals(serverId)) {
-            final Server server = settings.getServer(serverId);
+            final Server server = mavenSession.getSettings().getServer(serverId);
             final String username = server.getUsername();
             final String password = server.getPassword();
             final String s = username + ":" + password;

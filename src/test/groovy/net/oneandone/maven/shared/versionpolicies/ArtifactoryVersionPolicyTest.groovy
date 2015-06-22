@@ -15,6 +15,7 @@
  */
 package net.oneandone.maven.shared.versionpolicies
 
+import org.apache.maven.execution.MavenSession
 import org.apache.maven.project.MavenProject
 import org.apache.maven.settings.Server
 import org.apache.maven.settings.Settings
@@ -145,9 +146,10 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
         )
         def stubSettings = new Settings()
         stubSettings.addServer(stubServer)
+        MavenSession stubSession = new MavenSession(null, stubSettings, null, null, null, null, null, null, null)
         def mavenProject = getMavenProject()
         @Subject
-        def subjectUnderTest = new ArtifactoryVersionPolicyStub(mavenProject, stubSettings, '1.5.6')
+        def subjectUnderTest = new ArtifactoryVersionPolicyStub(mavenProject, stubSession, '1.5.6')
 
         when:
         def properties = mavenProject.getProperties();
@@ -178,8 +180,8 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
 
         private final String releaseVersionFromArtifactory;
 
-        public ArtifactoryVersionPolicyStub(MavenProject mavenProject, Settings settings, String releaseVersionFromArtifactory) {
-            super(mavenProject, settings);
+        public ArtifactoryVersionPolicyStub(MavenProject mavenProject, MavenSession mavenSession, String releaseVersionFromArtifactory) {
+            super(mavenProject, mavenSession);
             this.releaseVersionFromArtifactory = releaseVersionFromArtifactory;
         }
 
