@@ -25,19 +25,29 @@ class ChangesVersionPolicyTest extends Specification implements AbstractVersionP
         given:
         def mavenProject = createMavenProject();
         @Subject
-        def subjectUnderTest = new ChangesVersionPolicy(mavenProject);
+        def subjectUnderTest = new ChangesVersionPolicy(mavenProject, 'target/test-classes/changes/changes.xml');
 
         expect:
-        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER) is null
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version == '3.0.2'
     }
 
     def testGetDevelopmentVersion() throws Exception {
         given:
         def mavenProject = createMavenProject();
         @Subject
-        def subjectUnderTest = new ChangesVersionPolicy(mavenProject);
+        def subjectUnderTest = new ChangesVersionPolicy(mavenProject, null);
 
         expect:
         subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER).version == mavenProject.getVersion()
     }
+
+    def 'Has a default constructor used with injection in Maven'() {
+        given:
+        @Subject
+        def subjectUnderTest = new ChangesVersionPolicy()
+
+        expect:
+        subjectUnderTest != null
+    }
+
 }

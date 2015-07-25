@@ -16,6 +16,8 @@ software distributed under the License is distributed on an
 KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
+
+Copied from https://github.com/apache/maven-plugins/blob/2ace62dc71387a6f6b7d5fdd203c6570fb16eff1/maven-changes-plugin/src/main/mdo/changes.mdo
 -->
 <model xmlns="http://modello.codehaus.org/MODELLO/1.0.0"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
