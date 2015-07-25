@@ -15,13 +15,14 @@
  */
 package net.oneandone.maven.shared.versionpolicies
 
+import org.apache.maven.shared.release.policy.PolicyException
 import spock.lang.Specification
 import spock.lang.Subject
 
 class ChangesVersionPolicyTest extends Specification implements AbstractVersionPolicyTrait {
 
 
-    def testGetReleaseVersion() {
+    def 'Get releaseVersion from changes.xml'() {
         given:
         def mavenProject = createMavenProject();
         @Subject
@@ -31,7 +32,47 @@ class ChangesVersionPolicyTest extends Specification implements AbstractVersionP
         subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version == '3.0.2'
     }
 
-    def testGetDevelopmentVersion() throws Exception {
+    def 'Choke when changes.xml could not be found'() {
+        given:
+        def mavenProject = createMavenProject();
+        @Subject
+        def subjectUnderTest = new ChangesVersionPolicy(mavenProject, 'target/test-classes/changes/does_not_exist.xml');
+
+        when:
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER)
+
+        then:
+        thrown(PolicyException)
+    }
+
+    def 'Choke when changes.xml is not valid'() {
+        given:
+        def mavenProject = createMavenProject();
+        @Subject
+        def subjectUnderTest = new ChangesVersionPolicy(mavenProject, 'target/test-classes/changes/wrong_changes.xml');
+
+        when:
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER)
+
+        then:
+        thrown(PolicyException)
+    }
+
+    def 'Choke when changes.xml has no releases'() {
+        given:
+        def mavenProject = createMavenProject();
+        @Subject
+        def subjectUnderTest = new ChangesVersionPolicy(mavenProject, 'target/test-classes/changes/empty_changes.xml');
+
+        when:
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER)
+
+        then:
+        PolicyException e = thrown()
+        e.message.contains('No body found')
+    }
+
+    def 'Assures development version is SNAPSHOT'() throws Exception {
         given:
         def mavenProject = createMavenProject();
         @Subject

@@ -87,8 +87,11 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
         final String urlString = createUrlString();
         try {
             final URL url = new URL(urlString);
-            try (final InputStream stream = getInputStream(url)) {
+            final InputStream stream = getInputStream(url);
+            try {
                 currentVersion = IOUtil.toString(stream, "UTF-8");
+            } finally {
+                stream.close();
             }
         } catch (FileNotFoundException e) {
             currentVersion = "0"; //mavenProject.getVersion().replace("-SNAPSHOT", "");

@@ -15,6 +15,7 @@
  */
 package net.oneandone.maven.shared.versionpolicies;
 
+import net.oneandone.maven.shared.changes.model.Body;
 import net.oneandone.maven.shared.changes.model.ChangesDocument;
 import net.oneandone.maven.shared.changes.model.Release;
 import net.oneandone.maven.shared.changes.model.io.xpp3.ChangesXpp3Reader;
@@ -65,13 +66,20 @@ public class ChangesVersionPolicy implements VersionPolicy {
         final ChangesXpp3Reader reader = new ChangesXpp3Reader();
         final ChangesDocument document;
         try {
-            try(final FileReader fileReader = new FileReader(changesXml)) {
+            final FileReader fileReader = new FileReader(changesXml);
+            try {
                 document = reader.read(fileReader, true);
+            } finally {
+                fileReader.close();
             }
         } catch (IOException | XmlPullParserException e) {
-            throw new PolicyException("Could not read changes", e);
+            throw new PolicyException("Could not read changes from " + changesXml, e);
         }
-        final List<Release> releases = document.getBody().getReleases();
+        final Body body = document.getBody();
+        if (body == null) {
+            throw new PolicyException("No body found in " + changesXml);
+        }
+        final List<Release> releases = body.getReleases();
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
         versionPolicyResult.setVersion(releases.get(0).getVersion());
         return versionPolicyResult;
