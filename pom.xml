@@ -216,6 +216,38 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.modello</groupId>
+                <artifactId>modello-maven-plugin</artifactId>
+                <version>1.0.1</version><!-- cannot upgrade because of MODELLO-254 -->
+                <executions>
+                    <execution>
+                        <id>standard</id>
+                        <goals>
+                            <goal>java</goal>
+                            <goal>xpp3-reader</goal>
+                            <goal>xpp3-writer</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-xsd</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>xsd</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF/changes/xsd</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <useJava5>true</useJava5>
+                    <version>1.0.0</version>
+                    <models>
+                        <model>src/main/mdo/changes.mdo</model>
+                    </models>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
