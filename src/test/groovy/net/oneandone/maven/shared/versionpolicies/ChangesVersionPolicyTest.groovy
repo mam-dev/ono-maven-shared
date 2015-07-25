@@ -16,6 +16,7 @@
 package net.oneandone.maven.shared.versionpolicies
 
 import org.apache.maven.shared.release.policy.PolicyException
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -42,7 +43,8 @@ class ChangesVersionPolicyTest extends Specification implements AbstractVersionP
         subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER)
 
         then:
-        thrown(PolicyException)
+        PolicyException e = thrown()
+        e.cause.class.is(FileNotFoundException)
     }
 
     def 'Choke when changes.xml is not valid'() {
@@ -55,14 +57,15 @@ class ChangesVersionPolicyTest extends Specification implements AbstractVersionP
         subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER)
 
         then:
-        thrown(PolicyException)
+        PolicyException e = thrown()
+        e.cause.class.is(XmlPullParserException)
     }
 
-    def 'Choke when changes.xml has no releases'() {
+    def 'Choke when changes.xml has no body'() {
         given:
         def mavenProject = createMavenProject();
         @Subject
-        def subjectUnderTest = new ChangesVersionPolicy(mavenProject, 'target/test-classes/changes/empty_changes.xml');
+        def subjectUnderTest = new ChangesVersionPolicy(mavenProject, 'target/test-classes/changes/empty_body.xml');
 
         when:
         subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER)
@@ -70,6 +73,20 @@ class ChangesVersionPolicyTest extends Specification implements AbstractVersionP
         then:
         PolicyException e = thrown()
         e.message.contains('No body found')
+    }
+
+    def 'Choke when changes.xml has no releases'() {
+        given:
+        def mavenProject = createMavenProject();
+        @Subject
+        def subjectUnderTest = new ChangesVersionPolicy(mavenProject, 'target/test-classes/changes/empty_releases.xml');
+
+        when:
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER)
+
+        then:
+        PolicyException e = thrown()
+        e.message.contains('No releases found')
     }
 
     def 'Assures development version is SNAPSHOT'() throws Exception {

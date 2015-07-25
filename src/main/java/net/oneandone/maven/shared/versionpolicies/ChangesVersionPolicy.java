@@ -80,6 +80,9 @@ public class ChangesVersionPolicy implements VersionPolicy {
             throw new PolicyException("No body found in " + changesXml);
         }
         final List<Release> releases = body.getReleases();
+        if (releases.isEmpty()) {
+            throw new PolicyException("No releases found in " + changesXml);
+        }
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
         versionPolicyResult.setVersion(releases.get(0).getVersion());
         return versionPolicyResult;
