@@ -51,8 +51,6 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
 * When your SNAPSHOT version is bigger than the latest release version in Artifactory, it restarts with 0.
 * Additionally the [maven-release-plugin arguments](http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#arguments)
   are extended with `-DONOArtifactoryVersionPolicy.latest=LATEST_FOUND_RELEASE` and as of 2.5 `-DONOCurrentVersion=LATEST_FOUND_RELEASE`.
-* Additionally the [maven-release-plugin goals](http://maven.apache.org/maven-release/maven-release-plugin/perform-mojo.html#goals)
-  are extended with `-DONOCurrentVersion=LATEST_FOUND_RELEASE` as of 2.5.
 * As of version 2.4, you may provide a property `artifactory-version-policy-server-id` which is used for
   retrieving your credentials from `~/.m2/settings.xml`. This only works with plain text or 
   [centrally secure passwords](https://www.jfrog.com/confluence/display/RTF/Centrally+Secure+Passwords).
@@ -133,7 +131,7 @@ Development Version   | Version of Next Release | Latest Version
 
 * Say you want to use your `src/changes/changes.xml` as leading document while releasing.
 * The topmost release found in `src/changes/changes.xml` will be used as `releaseVersion`.
-* Additionally the [maven-release-plugin goals](http://maven.apache.org/maven-release/maven-release-plugin/perform-mojo.html#goals)
+* Additionally the [maven-release-plugin arguments](http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#arguments)
   are extended with `-DONOCurrentVersion=LATEST_FOUND_RELEASE`.
 * The next `developmentVersion` always stays the same until you change it yourself in the source.
 * Include shared library as `dependency` to `maven-release-plugin`.

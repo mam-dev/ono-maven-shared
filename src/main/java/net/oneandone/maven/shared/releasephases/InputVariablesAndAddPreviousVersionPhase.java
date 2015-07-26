@@ -79,7 +79,6 @@ public class InputVariablesAndAddPreviousVersionPhase extends AbstractReleasePha
             final String property = " -DONOArtifactoryVersionPolicy.latest=" + currentVersion;
             releaseDescriptor.setAdditionalArguments(
                     releaseDescriptor.getAdditionalArguments() + property + " -DONOCurrentVersion=" + currentVersion);
-            releaseDescriptor.setPerformGoals(releaseDescriptor.getPerformGoals() + " -DONOCurrentVersion=" + currentVersion);
         }
     }
 }

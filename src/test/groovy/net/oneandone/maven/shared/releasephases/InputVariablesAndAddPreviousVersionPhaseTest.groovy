@@ -57,8 +57,7 @@ class InputVariablesAndAddPreviousVersionPhaseTest extends Specification {
         given:
         def releaseDescriptor = new ReleaseDescriptor(
                 projectVersionPolicyId: 'ONOArtifactoryVersionPolicy',
-                additionalArguments: 'nothing',
-                performGoals: 'deploy'
+                additionalArguments: 'nothing'
         )
         def mockedVersionPolicy = Mock(ArtifactoryVersionPolicy.class);
         mockedVersionPolicy.currentVersion >> '1.5.6'
@@ -69,7 +68,6 @@ class InputVariablesAndAddPreviousVersionPhaseTest extends Specification {
 
         then:
         releaseDescriptor.additionalArguments == 'nothing -DONOArtifactoryVersionPolicy.latest=1.5.6 -DONOCurrentVersion=1.5.6'
-        releaseDescriptor.performGoals == 'deploy -DONOCurrentVersion=1.5.6'
     }
 
     def 'Has a default constructor used with injection in Maven'() {
