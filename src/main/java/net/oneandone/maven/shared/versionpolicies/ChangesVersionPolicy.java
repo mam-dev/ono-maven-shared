@@ -29,7 +29,7 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -67,11 +67,12 @@ public class ChangesVersionPolicy implements VersionPolicy {
         final ChangesXpp3Reader reader = new ChangesXpp3Reader();
         final ChangesDocument document;
         try {
-            final FileReader fileReader = new FileReader(changesXml);
+            // do *not* use a Reader here as ChangesXpp3Reader uses clever XML declaration guessing when getting a stream.
+            final FileInputStream in = new FileInputStream(changesXml);
             try {
-                document = reader.read(fileReader, true);
+                document = reader.read(in, true);
             } finally {
-                fileReader.close();
+                in.close();
             }
         } catch (IOException | XmlPullParserException e) {
             throw new PolicyException("Could not read changes from " + changesXml, e);
