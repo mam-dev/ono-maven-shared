@@ -35,7 +35,9 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * A {@link VersionPolicy} implementation that retrieves the latest version from the changes file..
+ * A {@link VersionPolicy} implementation that retrieves the latest version from the changes file.
+ *
+ * @since 2.5
  */
 @Component(
         role = VersionPolicy.class,
