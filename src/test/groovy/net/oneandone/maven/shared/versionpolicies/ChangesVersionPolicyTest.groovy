@@ -19,18 +19,25 @@ import org.apache.maven.shared.release.policy.PolicyException
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Unroll
 
 class ChangesVersionPolicyTest extends Specification implements AbstractVersionPolicyTrait {
 
-
-    def 'Get releaseVersion from changes.xml'() {
+    @Unroll('Get releaseVersion=#releaseVersion and currentVersion=#currentVersion from #changesFile')
+    def 'Get releaseVersion from changes.xml'(String changesFile, String releaseVersion, String currentVersion) {
         given:
         def mavenProject = createMavenProject();
         @Subject
-        def subjectUnderTest = new ChangesVersionPolicy(mavenProject, 'target/test-classes/changes/changes.xml');
+        def subjectUnderTest = new ChangesVersionPolicy(mavenProject, 'target/test-classes/changes/' + changesFile);
 
         expect:
-        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version == '3.0.2'
+        subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version == releaseVersion
+        subjectUnderTest.currentVersion == currentVersion
+
+        where:
+        changesFile       | releaseVersion | currentVersion
+        'twoversions.xml' | '3.0.2'        | '3.0.1'
+        'oneversion.xml'  | '3.0.2'        | 'UNKNOWN'
     }
 
     def 'Choke when changes.xml could not be found'() {

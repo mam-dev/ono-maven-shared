@@ -55,7 +55,11 @@ class InputVariablesAndAddPreviousVersionPhaseTest extends Specification {
 
     def 'Returns "nothing -DONOArtifactoryVersionPolicy.latest=1.5.6" on execute when projectVersionPolicyId is ONOArtifactoryVersionPolicy'() {
         given:
-        def releaseDescriptor = new ReleaseDescriptor(projectVersionPolicyId: 'ONOArtifactoryVersionPolicy', additionalArguments: 'nothing')
+        def releaseDescriptor = new ReleaseDescriptor(
+                projectVersionPolicyId: 'ONOArtifactoryVersionPolicy',
+                additionalArguments: 'nothing',
+                performGoals: 'deploy'
+        )
         def mockedVersionPolicy = Mock(ArtifactoryVersionPolicy.class);
         mockedVersionPolicy.currentVersion >> '1.5.6'
         versionPolicies['ONOArtifactoryVersionPolicy'] = mockedVersionPolicy
@@ -64,7 +68,8 @@ class InputVariablesAndAddPreviousVersionPhaseTest extends Specification {
         subjectUnderTest.execute(releaseDescriptor, (ReleaseEnvironment) null, null);
 
         then:
-        releaseDescriptor.additionalArguments == 'nothing -DONOArtifactoryVersionPolicy.latest=1.5.6'
+        releaseDescriptor.additionalArguments == 'nothing -DONOArtifactoryVersionPolicy.latest=1.5.6 -DONOCurrentVersion=1.5.6'
+        releaseDescriptor.performGoals == 'deploy -DONOCurrentVersion=1.5.6'
     }
 
     def 'Has a default constructor used with injection in Maven'() {

@@ -43,13 +43,16 @@ import java.util.List;
         hint = "ONOChangesVersionPolicy",
         description = "A VersionPolicy implementation that retrieves the latest version from the changes file."
 )
-public class ChangesVersionPolicy implements VersionPolicy {
+public class ChangesVersionPolicy implements VersionPolicy, CurrentVersion {
 
     @Requirement
     MavenProject mavenProject;
 
     private static final String CHANGES_XML = "src/changes/changes.xml";
+
     private final String changesXml;
+
+    private String currentVersion;
 
     // For injection.
     public ChangesVersionPolicy() {
@@ -87,6 +90,11 @@ public class ChangesVersionPolicy implements VersionPolicy {
         }
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
         versionPolicyResult.setVersion(releases.get(0).getVersion());
+        if (releases.size() > 1) {
+            currentVersion = releases.get(1).getVersion();
+        } else {
+            currentVersion = "UNKNOWN";
+        }
         return versionPolicyResult;
     }
 
@@ -95,5 +103,10 @@ public class ChangesVersionPolicy implements VersionPolicy {
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
         versionPolicyResult.setVersion(mavenProject.getVersion());
         return versionPolicyResult;
+    }
+
+    @Override
+    public String getCurrentVersion() {
+        return currentVersion;
     }
 }

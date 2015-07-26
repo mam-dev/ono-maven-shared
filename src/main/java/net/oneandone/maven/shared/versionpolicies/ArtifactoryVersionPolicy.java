@@ -47,7 +47,7 @@ import java.util.Properties;
         hint = "ONOArtifactoryVersionPolicy",
         description = "Retrieves the latest release from Artifactory and bases the next releaseVersion on it."
 )
-public class ArtifactoryVersionPolicy implements VersionPolicy {
+public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
 
     private static final String HTTP_ARTIFACTORY = "http://repo.jfrog.org/artifactory";
     private static final String REPOSITORIES = "repo1";
@@ -145,6 +145,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy {
         return connection;
     }
 
+    @Override
     public String getCurrentVersion() {
         return currentVersion;
     }
