@@ -13,6 +13,32 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
   the next release and development version.
 * By default, `-SNAPSHOT` is stripped to determine the release version, the last numeric part if this release version
   is increased and extended by `-SNAPSHOT` again to get the next development version.
+* `ono-maven-shared` offers some additional policies.
+* To use these during `release` you need to include this component as dependency like this:
+
+```xml
+    <project>
+        <build>
+          <pluginManagement>
+            <plugins>
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-release-plugin</artifactId>
+                  <version>${maven-release-plugin.version}</version>
+                  <dependencies>
+                      <dependency>
+                          <groupId>net.oneandone.maven</groupId>
+                          <artifactId>ono-maven-shared</artifactId>
+                          <version>2.X</version>
+                      </dependency>
+                  </dependencies>
+              </plugin>
+            </plugins>
+          </pluginManagement>
+        </build>
+    </project>
+```
+
 
 ### `ONOArtifactoryVersionPolicy`
 
@@ -24,7 +50,7 @@ Latest Travis-Build: [![Build Status](https://travis-ci.org/1and1/ono-maven-shar
   `developmentVersion` always stays the same until you change it yourself in the source. 
 * When your SNAPSHOT version is bigger than the latest release version in Artifactory, it restarts with 0.
 * Additionally the [maven-release-plugin arguments](http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#arguments)
-  are extended with `-DONOArtifactoryVersionPolicy.latest=LATEST_FOUND_RELEASE`.
+  are extended with `-DONOArtifactoryVersionPolicy.latest=LATEST_FOUND_RELEASE` and as of 2.5 `-DONOCurrentVersion=LATEST_FOUND_RELEASE`.
 * As of version 2.4, you may provide a property `artifactory-version-policy-server-id` which is used for
   retrieving your credentials from `~/.m2/settings.xml`. This only works with plain text or 
   [centrally secure passwords](https://www.jfrog.com/confluence/display/RTF/Centrally+Secure+Passwords).
@@ -72,20 +98,7 @@ Development Version   | Version of Next Release | Latest Version
             <!-- for inhouse repositories -->
             <artifactory-version-policy-repositories>first-repo,second-repo</artifactory-version-policy-repositories>
         </properties>
-        <build><pluginManagement><plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-release-plugin</artifactId>
-            <version>${maven-release-plugin.version}</version>
-            <dependencies>
-                <dependency>
-                    <groupId>net.oneandone.maven</groupId>
-                    <artifactId>ono-maven-shared</artifactId>
-                    <version>2.X</version>
-                </dependency>
-            </dependencies>
-        </plugin>
-        </plugins></pluginManagement></build>
+        <!-- do not forget to include ono-maven-shared as dependency as stated above -->
     </project>
 ```
 
@@ -110,21 +123,29 @@ Development Version   | Version of Next Release | Latest Version
             <projectVersionPolicyId>ONOBuildNumberVersionPolicy</projectVersionPolicyId>
             <buildnumber-version-policy-identifier>TRAVIS_BUILD_NUMBER<buildnumber-version-policy-identifier>
         </properties>
-        <build><pluginManagement><plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-release-plugin</artifactId>
-            <version>${maven-release-plugin.version}</version>
-            <dependencies>
-                <dependency>
-                    <groupId>net.oneandone.maven</groupId>
-                    <artifactId>ono-maven-shared</artifactId>
-                    <version>1.X</version>
-                </dependency>
-            </dependencies>
-        </plugin>
-        </plugins></pluginManagement></build>
+        <!-- do not forget to include ono-maven-shared as dependency as stated above -->
     </project>
 ```
+
+### `ONOChangesVersionPolicy`
+
+* Say you want to use your `src/changes/changes.xml` as leading document while releasing.
+* The topmost release found in `src/changes/changes.xml` will be used as `releaseVersion`.
+* Additionally the [maven-release-plugin arguments](http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#arguments)
+  are extended with `-DONOCurrentVersion=LATEST_FOUND_RELEASE`.
+* The next `developmentVersion` always stays the same until you change it yourself in the source.
+* Include shared library as `dependency` to `maven-release-plugin`.
+* Set `projectVersionPolicyId` to `ONOChangesVersionPolicy`.
+* See #10 as well.
+
+```xml
+    <project>
+        <properties>
+            <projectVersionPolicyId>ONOChangesVersionPolicy</projectVersionPolicyId>
+        </properties>
+        <!-- do not forget to include ono-maven-shared as dependency as stated above -->
+    </project>
+```
+
 
 [maven-release-plugin]: http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#projectVersionPolicyId

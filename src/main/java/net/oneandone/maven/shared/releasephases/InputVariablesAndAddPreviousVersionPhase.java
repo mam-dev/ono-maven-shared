@@ -15,7 +15,7 @@
  */
 package net.oneandone.maven.shared.releasephases;
 
-import net.oneandone.maven.shared.versionpolicies.ArtifactoryVersionPolicy;
+import net.oneandone.maven.shared.versionpolicies.CurrentVersion;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -72,11 +72,13 @@ public class InputVariablesAndAddPreviousVersionPhase extends AbstractReleasePha
 
     private void addLatestProperty(ReleaseDescriptor releaseDescriptor) {
         final String policyId = releaseDescriptor.getProjectVersionPolicyId();
-        if (policyId.equals("ONOArtifactoryVersionPolicy")) {
-            final ArtifactoryVersionPolicy versionPolicy = (ArtifactoryVersionPolicy) versionPolicies.get(policyId);
-            final String currentVersion = versionPolicy.getCurrentVersion();
+        final VersionPolicy versionPolicy = versionPolicies.get(policyId);
+        if (versionPolicy instanceof CurrentVersion) {
+            final CurrentVersion currentVersionPolicy = (CurrentVersion) versionPolicy;
+            final String currentVersion = currentVersionPolicy.getCurrentVersion();
             final String property = " -DONOArtifactoryVersionPolicy.latest=" + currentVersion;
-            releaseDescriptor.setAdditionalArguments(releaseDescriptor.getAdditionalArguments() + property);
+            releaseDescriptor.setAdditionalArguments(
+                    releaseDescriptor.getAdditionalArguments() + property + " -DONOCurrentVersion=" + currentVersion);
         }
     }
 }

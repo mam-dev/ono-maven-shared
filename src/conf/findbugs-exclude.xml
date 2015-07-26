@@ -1,0 +1,5 @@
+<FindBugsFilter>
+    <Match>
+        <Class name="~net\.oneandone\.maven\.shared\.changes\.model\..*"/>
+    </Match>
+</FindBugsFilter>
