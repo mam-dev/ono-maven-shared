@@ -129,6 +129,7 @@ Development Version   | Version of Next Release | Latest Version
 
 ### `ONOChangesVersionPolicy`
 
+* Since 2.6
 * Say you want to use your `src/changes/changes.xml` as leading document while releasing.
 * The topmost release found in `src/changes/changes.xml` will be used as `releaseVersion`.
 * Additionally the [maven-release-plugin arguments](http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#arguments)
