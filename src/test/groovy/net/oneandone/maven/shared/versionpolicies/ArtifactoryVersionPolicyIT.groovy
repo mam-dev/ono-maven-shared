@@ -16,6 +16,7 @@
 package net.oneandone.maven.shared.versionpolicies
 
 import org.apache.maven.shared.release.versions.DefaultVersionInfo
+import org.junit.AssumptionViolatedException
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -26,6 +27,7 @@ class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersio
 
     def 'New foss-parent version should always be bigger then 1.5.6'() {
         given:
+        checkRepoJfrogIsReachable()
         def oldVersionInfo = new DefaultVersionInfo("1.5.6");
 
         when:
@@ -39,6 +41,7 @@ class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersio
 
     def 'No version found at Artifactory, i.e. first release'() {
         given:
+        checkRepoJfrogIsReachable()
         subjectUnderTest.mavenProject.artifactId = 'unknown-artifact-id-i-do-not-exist'
         subjectUnderTest.mavenProject.version = '1.0-SNAPSHOT'
 
@@ -51,5 +54,18 @@ class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersio
         newSnapshotVersion == subjectUnderTest.mavenProject.version
         ! newVersionInfo.isSnapshot()
         newVersionInfo.releaseVersionString == '1.0.0'
+    }
+
+    static void checkRepoJfrogIsReachable() {
+        try {
+            final URL url = new URL('http://repo.jfrog.org/artifactory');
+            try {
+                url.openStream().close();
+            } catch (IOException ex) {
+                throw new AssumptionViolatedException("Could not reach " + url);
+            }
+        } catch (MalformedURLException ex) {
+            throw new AssumptionViolatedException("Malformed URL", ex);
+        }
     }
 }
