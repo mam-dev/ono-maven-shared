@@ -58,14 +58,15 @@ class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersio
 
     static void checkRepoJfrogIsReachable() {
         try {
-            final URL url = new URL('http://repo.jfrog.org/artifactory');
+            final URLConnection urlConnection = new URL('http://repo.jfrog.org/artifactory').openConnection()
             try {
-                url.openStream().close();
+                urlConnection.setConnectTimeout(5000)
+                urlConnection.getInputStream().close()
             } catch (IOException ex) {
-                throw new AssumptionViolatedException("Could not reach " + url);
+                throw new AssumptionViolatedException("Could not reach " + urlConnection.getURL())
             }
         } catch (MalformedURLException ex) {
-            throw new AssumptionViolatedException("Malformed URL", ex);
+            throw new AssumptionViolatedException("Malformed URL", ex)
         }
     }
 }
