@@ -17,6 +17,7 @@ package net.oneandone.maven.shared.versionpolicies
 
 import org.apache.maven.shared.release.versions.DefaultVersionInfo
 import org.junit.AssumptionViolatedException
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -39,6 +40,7 @@ class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersio
         newVersionInfo > oldVersionInfo
     }
 
+    @Ignore("https://www.jfrog.com/jira/browse/RTFACT-8486")
     def 'No version found at Artifactory, i.e. first release'() {
         given:
         checkRepoJfrogIsReachable()
@@ -63,7 +65,7 @@ class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersio
                 urlConnection.setConnectTimeout(5000)
                 urlConnection.getInputStream().close()
             } catch (IOException ex) {
-                throw new AssumptionViolatedException("Could not reach " + urlConnection.getURL())
+                throw new AssumptionViolatedException("Could not reach " + urlConnection.getURL(), ex)
             }
         } catch (MalformedURLException ex) {
             throw new AssumptionViolatedException("Malformed URL", ex)
