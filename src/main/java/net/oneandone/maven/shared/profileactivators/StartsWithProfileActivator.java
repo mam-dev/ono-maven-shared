@@ -27,7 +27,7 @@ public class StartsWithProfileActivator implements ProfileActivator {
                 final String name = property.getName();
                 final String value = property.getValue();
                 if (value.startsWith(STARTSWITH)) {
-                    final String needle = value.split(STARTSWITH, 1)[1];
+                    final String needle = value.substring(STARTSWITH.length());
                     final Map<String, String> systemProperties = context.getSystemProperties();
                     final String propertyToCheck = systemProperties.get(name);
                     return propertyToCheck != null && propertyToCheck.startsWith(needle);
