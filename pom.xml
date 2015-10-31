@@ -214,6 +214,17 @@
                         </excludes>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>external.atlassian.jgitflow</groupId>
+                    <artifactId>jgitflow-maven-plugin</artifactId>
+                    <configuration>
+                        <enableSshAgent>true</enableSshAgent>
+                        <flowInitContext>
+                            <masterBranchName>production</masterBranchName>
+                            <developBranchName>master</developBranchName>
+                        </flowInitContext>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
