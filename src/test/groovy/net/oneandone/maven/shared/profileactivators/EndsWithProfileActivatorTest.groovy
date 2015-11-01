@@ -7,46 +7,46 @@ import org.apache.maven.model.profile.ProfileActivationContext
 import spock.lang.Specification
 import spock.lang.Subject
 
-class StartsWithProfileActivatorTest extends Specification {
+class EndsWithProfileActivatorTest extends Specification {
 
     def 'Check no activation given'() {
         given:
         def profile = Mock(Profile)
         def profileActivationContext = Mock(ProfileActivationContext)
         @Subject
-        def sut = new StartsWithProfileActivator()
+        def sut = new EndsWithProfileActivator()
         expect:
         !sut.isActive(profile, profileActivationContext, null)
     }
 
-    def 'Check a property starts with a value'() {
+    def 'Check a property ends with a value'() {
         given:
         def activation = new Activation()
         activation.property = new ActivationProperty()
         activation.property.name = 'bar'
-        activation.property.value = 'startswith:foo'
+        activation.property.value = 'endswith:foo'
         def profile = Mock(Profile)
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
         profileActivationContext.systemProperties >> ['bar': 'foofoo']
         @Subject
-        def sut = new StartsWithProfileActivator()
+        def sut = new EndsWithProfileActivator()
         expect:
         sut.isActive(profile, profileActivationContext, null)
     }
 
-    def 'Check a property starts with a value but system property does not exist'() {
+    def 'Check a property ends with a value but system property does not exist'() {
         given:
         def activation = new Activation()
         activation.property = new ActivationProperty()
         activation.property.name = 'bar'
-        activation.property.value = 'startswith:foo'
+        activation.property.value = 'endswith:foo'
         def profile = Mock(Profile)
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
         profileActivationContext.systemProperties >> ['foo': 'foofoo']
         @Subject
-        def sut = new StartsWithProfileActivator()
+        def sut = new EndsWithProfileActivator()
         expect:
         !sut.isActive(profile, profileActivationContext, null)
     }
@@ -56,13 +56,13 @@ class StartsWithProfileActivatorTest extends Specification {
         def activation = new Activation()
         activation.property = new ActivationProperty()
         activation.property.name = 'bar'
-        activation.property.value = 'startswith:foo'
+        activation.property.value = 'endswith:foo'
         def profile = Mock(Profile)
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
         profileActivationContext.systemProperties >> ['bar': 'bar']
         @Subject
-        def sut = new StartsWithProfileActivator()
+        def sut = new EndsWithProfileActivator()
         expect:
         !sut.isActive(profile, profileActivationContext, null)
     }
@@ -77,7 +77,7 @@ class StartsWithProfileActivatorTest extends Specification {
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
         @Subject
-        def sut = new StartsWithProfileActivator()
+        def sut = new EndsWithProfileActivator()
         expect:
         !sut.isActive(profile, profileActivationContext, null)
     }
@@ -90,7 +90,7 @@ class StartsWithProfileActivatorTest extends Specification {
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
         @Subject
-        def sut = new StartsWithProfileActivator()
+        def sut = new EndsWithProfileActivator()
         expect:
         !sut.isActive(profile, profileActivationContext, null)
     }
@@ -100,7 +100,7 @@ class StartsWithProfileActivatorTest extends Specification {
         def profile = Mock(Profile)
         def profileActivationContext = Mock(ProfileActivationContext)
         @Subject
-        def sut = new StartsWithProfileActivator()
+        def sut = new EndsWithProfileActivator()
         expect:
         !sut.presentInConfig(profile, profileActivationContext, null)
     }
