@@ -7,20 +7,20 @@ import org.apache.maven.model.profile.ProfileActivationContext
 import spock.lang.Specification
 import spock.lang.Subject
 
-class EndsWithProfileActivatorTest extends Specification {
+class ContainsProfileActivatorTest extends Specification {
 
     def 'Check a property ends with a value'() {
         given:
         def activation = new Activation()
         activation.property = new ActivationProperty()
         activation.property.name = 'bar'
-        activation.property.value = 'endswith:foo'
+        activation.property.value = 'contains:foo'
         def profile = Mock(Profile)
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
-        profileActivationContext.systemProperties >> ['bar': 'foofoo']
+        profileActivationContext.systemProperties >> ['bar': 'barfoobar']
         @Subject
-        def sut = new EndsWithProfileActivator()
+        def sut = new ContainsProfileActivator()
         expect:
         sut.isActive(profile, profileActivationContext, null)
     }
