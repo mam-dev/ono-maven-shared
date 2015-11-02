@@ -6,7 +6,7 @@ import org.codehaus.plexus.component.annotations.Component;
 /**
  * Instead of complete matching, only check if the property ends with a special value.
  */
-@Component(role = ProfileActivator.class, hint = "property")
+@Component(role = ProfileActivator.class, hint = "ono-contains")
 public class ContainsProfileActivator extends AbstractMatchesWithProfileActivator {
 
     private static final String CONTAINS = "contains:";

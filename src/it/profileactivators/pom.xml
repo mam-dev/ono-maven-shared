@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>@project.groupId@</groupId>
+    <artifactId>sample-project-profile-activators</artifactId>
+    <version>3000</version>
+    <packaging>pom</packaging>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-help-plugin</artifactId>
+                    <version>2.2</version>
+                    <executions>
+                        <execution>
+                            <id>print-active-profiles</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>active-profiles</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-help-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <extensions>
+            <!-- needed for findbugs -->
+            <extension>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+            </extension>
+        </extensions>
+    </build>
+    <!--profiles>
+        <profile>
+            <id>property-starts-with</id>
+            <activation>
+                <ono-startswith>
+                    <name>propertyname</name>
+                    <value>startswith:foo</value>
+                </ono-startswith>
+            </activation>
+        </profile>
+    </profiles-->
+</project>
