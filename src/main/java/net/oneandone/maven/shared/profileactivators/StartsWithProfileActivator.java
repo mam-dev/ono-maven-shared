@@ -7,9 +7,9 @@ import org.codehaus.plexus.component.annotations.Component;
  * Instead of complete matching, only check if the property startswith a special value.
  */
 @Component(role = ProfileActivator.class, hint = "ono-startswith")
-public class StartsWithProfileActivator extends AbstractMatchesWithProfileActivator {
+class StartsWithProfileActivator extends AbstractMatchesWithProfileActivator {
 
-    private static final String STARTSWITH = "startswith:";
+    private static final String STARTSWITH = "startswith";
 
     public StartsWithProfileActivator() {
         super(STARTSWITH);

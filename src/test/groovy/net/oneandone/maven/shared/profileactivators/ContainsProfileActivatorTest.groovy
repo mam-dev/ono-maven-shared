@@ -14,10 +14,11 @@ class ContainsProfileActivatorTest extends Specification {
         def activation = new Activation()
         activation.property = new ActivationProperty()
         activation.property.name = 'bar'
-        activation.property.value = 'contains:foo'
+        activation.property.value = 'ono:contains:foo'
         def profile = Mock(Profile)
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
+        profileActivationContext.userProperties >> [:]
         profileActivationContext.systemProperties >> ['bar': 'barfoobar']
         @Subject
         def sut = new ContainsProfileActivator()

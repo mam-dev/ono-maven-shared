@@ -14,10 +14,11 @@ class StartsWithProfileActivatorTest extends Specification {
         def activation = new Activation()
         activation.property = new ActivationProperty()
         activation.property.name = 'bar'
-        activation.property.value = 'startswith:foo'
+        activation.property.value = 'ono:startswith:foo'
         def profile = Mock(Profile)
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
+        profileActivationContext.userProperties >> [:]
         profileActivationContext.systemProperties >> ['bar': 'foofoo']
         @Subject
         def sut = new StartsWithProfileActivator()

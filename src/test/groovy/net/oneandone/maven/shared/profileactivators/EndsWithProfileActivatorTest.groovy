@@ -14,10 +14,11 @@ class EndsWithProfileActivatorTest extends Specification {
         def activation = new Activation()
         activation.property = new ActivationProperty()
         activation.property.name = 'bar'
-        activation.property.value = 'endswith:foo'
+        activation.property.value = 'ono:endswith:foo'
         def profile = Mock(Profile)
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
+        profileActivationContext.userProperties >> [:]
         profileActivationContext.systemProperties >> ['bar': 'foofoo']
         @Subject
         def sut = new EndsWithProfileActivator()

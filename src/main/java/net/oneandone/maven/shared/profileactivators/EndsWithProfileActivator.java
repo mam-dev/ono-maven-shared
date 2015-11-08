@@ -7,9 +7,9 @@ import org.codehaus.plexus.component.annotations.Component;
  * Instead of complete matching, only check if the property ends with a special value.
  */
 @Component(role = ProfileActivator.class, hint = "ono-endswith")
-public class EndsWithProfileActivator extends AbstractMatchesWithProfileActivator {
+class EndsWithProfileActivator extends AbstractMatchesWithProfileActivator {
 
-    private static final String ENDSWITH = "endswith:";
+    private static final String ENDSWITH = "endswith";
 
     public EndsWithProfileActivator() {
         super(ENDSWITH);

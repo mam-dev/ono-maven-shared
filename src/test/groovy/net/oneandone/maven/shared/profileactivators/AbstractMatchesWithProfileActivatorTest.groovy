@@ -14,10 +14,11 @@ class AbstractMatchesWithProfileActivatorTest extends Specification {
         def activation = new Activation()
         activation.property = new ActivationProperty()
         activation.property.name = 'bar'
-        activation.property.value = 'startswith:foo'
+        activation.property.value = 'ono:startswith:foo'
         def profile = Mock(Profile)
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
+        profileActivationContext.userProperties >> [:]
         profileActivationContext.systemProperties >> ['foo': 'foofoo']
         @Subject
         def sut = create()
@@ -40,10 +41,11 @@ class AbstractMatchesWithProfileActivatorTest extends Specification {
         def activation = new Activation()
         activation.property = new ActivationProperty()
         activation.property.name = 'bar'
-        activation.property.value = 'startswith:foo'
+        activation.property.value = 'ono:startswith:foo'
         def profile = Mock(Profile)
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
+        profileActivationContext.userProperties >> [:]
         profileActivationContext.systemProperties >> ['bar': 'bar']
         @Subject
         def sut = create()
@@ -60,6 +62,8 @@ class AbstractMatchesWithProfileActivatorTest extends Specification {
         def profile = Mock(Profile)
         profile.activation >> activation
         def profileActivationContext = Mock(ProfileActivationContext)
+        profileActivationContext.userProperties >> [:]
+        profileActivationContext.systemProperties >> [:]
         @Subject
         def sut = create()
         expect:
