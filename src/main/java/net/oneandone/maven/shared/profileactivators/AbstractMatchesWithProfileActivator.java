@@ -44,24 +44,36 @@ public abstract class AbstractMatchesWithProfileActivator implements ProfileActi
         public boolean invoke() {
             final Activation activation = profile.getActivation();
             if (activation != null) {
-                final ActivationProperty property = activation.getProperty();
-                if (property != null) {
-                    final String name = property.getName();
-                    final String value = property.getValue();
-                    if (value.startsWith(prefix)) {
-                        final String needle = value.substring(prefix.length());
-                        final Map<String, String> systemProperties = context.getSystemProperties();
-                        final String propertyToCheck = systemProperties.get(name);
-                        return propertyToCheck != null && matches(needle, propertyToCheck);
-                    } else {
-                        return new PropertyProfileActivator().isActive(profile, context, problems);
-                    }
-                } else {
-                    return false;
-                }
+                return withActivation(activation);
             } else {
                 return false;
             }
+        }
+
+        private boolean withActivation(Activation activation) {
+            final ActivationProperty property = activation.getProperty();
+            if (property != null) {
+                return withProperty(property);
+            } else {
+                return false;
+            }
+        }
+
+        private boolean withProperty(ActivationProperty property) {
+            final String name = property.getName();
+            final String value = property.getValue();
+            if (value != null && value.startsWith(prefix)) {
+                return withValue(name, value);
+            } else {
+                return new PropertyProfileActivator().isActive(profile, context, problems);
+            }
+        }
+
+        private boolean withValue(String name, String value) {
+            final String needle = value.substring(prefix.length());
+            final Map<String, String> systemProperties = context.getSystemProperties();
+            final String propertyToCheck = systemProperties.get(name);
+            return propertyToCheck != null && matches(needle, propertyToCheck);
         }
     }
 }
