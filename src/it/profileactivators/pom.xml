@@ -31,7 +31,6 @@
             </plugin>
         </plugins>
         <extensions>
-            <!-- needed for findbugs -->
             <extension>
                 <groupId>@project.groupId@</groupId>
                 <artifactId>@project.artifactId@</artifactId>
@@ -39,15 +38,15 @@
             </extension>
         </extensions>
     </build>
-    <!--profiles>
+    <profiles>
         <profile>
             <id>property-starts-with</id>
             <activation>
-                <ono-startswith>
+                <property>
                     <name>propertyname</name>
-                    <value>startswith:foo</value>
-                </ono-startswith>
+                    <value>ono:startswith:foo</value>
+                </property>
             </activation>
         </profile>
-    </profiles-->
+    </profiles>
 </project>
