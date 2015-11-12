@@ -15,10 +15,8 @@
  */
 package net.oneandone.maven.shared.versionpolicies;
 
-import net.oneandone.maven.shared.changes.model.Body;
-import net.oneandone.maven.shared.changes.model.ChangesDocument;
+import net.oneandone.maven.shared.ChangesReleases;
 import net.oneandone.maven.shared.changes.model.Release;
-import net.oneandone.maven.shared.changes.model.io.xpp3.ChangesXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
@@ -27,10 +25,7 @@ import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -67,27 +62,7 @@ public class ChangesVersionPolicy implements VersionPolicy, CurrentVersion {
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
-        final ChangesXpp3Reader reader = new ChangesXpp3Reader();
-        final ChangesDocument document;
-        try {
-            // do *not* use a Reader here as ChangesXpp3Reader uses clever XML declaration guessing when getting a stream.
-            final FileInputStream in = new FileInputStream(changesXml);
-            try {
-                document = reader.read(in, true);
-            } finally {
-                in.close();
-            }
-        } catch (IOException | XmlPullParserException e) {
-            throw new PolicyException("Could not read changes from " + changesXml, e);
-        }
-        final Body body = document.getBody();
-        if (body == null) {
-            throw new PolicyException("No body found in " + changesXml);
-        }
-        final List<Release> releases = body.getReleases();
-        if (releases.isEmpty()) {
-            throw new PolicyException("No releases found in " + changesXml);
-        }
+        final List<Release> releases = new ChangesReleases(changesXml).getReleases();
         final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
         versionPolicyResult.setVersion(releases.get(0).getVersion());
         if (releases.size() > 1) {
