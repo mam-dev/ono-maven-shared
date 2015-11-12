@@ -11,6 +11,7 @@
     <groupId>net.oneandone.maven</groupId>
     <artifactId>ono-maven-shared</artifactId>
     <version>2.7-SNAPSHOT</version>
+    <packaging>maven-plugin</packaging>
 
     <name>1-and-1 :: FOSS Libraries useable by Apache Maven</name>
     <description>Additional policies for use with the maven-release-plugin.</description>
@@ -134,6 +135,20 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-settings</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>3.3</version>
+            <!-- annotations are not needed for plugin execution so you can remove this dependency
+            for execution with using provided scope -->
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-artifact</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.release</groupId>
@@ -276,6 +291,29 @@
                         <model>src/main/mdo/changes.mdo</model>
                     </models>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>${maven-plugin-plugin.version}</version>
+                <configuration>
+                    <goalPrefix>ono-maven-shared</goalPrefix>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>mojo-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generated-helpmojo</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
