@@ -125,6 +125,12 @@
                 <version>2.4.3</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.objenesis</groupId>
+                <artifactId>objenesis</artifactId>
+                <version>2.4</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -204,6 +210,10 @@
             <version>3.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -268,7 +278,6 @@
                 <version>1.0.1</version><!-- cannot upgrade because of MODELLO-254 -->
                 <executions>
                     <execution>
-                        <id>standard</id>
                         <goals>
                             <goal>java</goal>
                             <goal>xpp3-reader</goal>
@@ -276,8 +285,7 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>generate-xsd</id>
-                        <phase>generate-resources</phase>
+                        <id>default-xsd</id>
                         <goals>
                             <goal>xsd</goal>
                         </goals>
@@ -304,13 +312,13 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>mojo-descriptor</id>
+                        <id>default-descriptor</id>
                         <goals>
                             <goal>descriptor</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>generated-helpmojo</id>
+                        <id>default-helpmojo</id>
                         <goals>
                             <goal>helpmojo</goal>
                         </goals>

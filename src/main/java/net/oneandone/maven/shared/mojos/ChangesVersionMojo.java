@@ -16,6 +16,8 @@
 package net.oneandone.maven.shared.mojos;
 
 import net.oneandone.maven.shared.ChangesReleases;
+import net.oneandone.maven.shared.changes.model.Release;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -24,27 +26,71 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
 
+import java.util.List;
+import java.util.Properties;
+
 /**
  *
  */
 @Mojo(name = "changes-version", requiresDirectInvocation = true, requiresProject = true)
 public class ChangesVersionMojo extends AbstractMojo {
 
+    private static final String CHANGES_XML = "src/changes/changes.xml";
+    static final String DEVELOPMENT_VERSION = "developmentVersion";
+    static final String RELEASE_VERSION = "releaseVersion";
+    static final String NEW_VERSION = "newVersion";
+    static final String CURRENT_VERSION = "ONOCurrentVersion";
+
+    private final String changesXml;
     /**
      * The Maven project.
      */
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
+    /**
+     * The Maven session.
+     */
+    @Parameter(defaultValue = "${session}", readonly = true)
+    private MavenSession session;
+
+    public ChangesVersionMojo() {
+        changesXml = CHANGES_XML;
+    }
+
+    ChangesVersionMojo(String changesXml, MavenProject project, MavenSession session) {
+        this.changesXml = changesXml;
+        this.project = project;
+        this.session= session;
+    }
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final ChangesReleases changesReleases = new ChangesReleases("src/changes/changes.xml");
+        if (!project.isExecutionRoot()) {
+            getLog().debug("changes-version: skipping because " + project + " is not execution root");
+            return;
+        }
+        final ChangesReleases changesReleases = new ChangesReleases(changesXml);
+        final String release;
+        final String current;
         try {
-            changesReleases.getReleases();
+            final List<Release> releases = changesReleases.getReleases();
+            release = releases.get(0).getVersion();
+            current = releases.size()>1 ? releases.get(1).getVersion() : "UNKNOWN";
         } catch (PolicyException e) {
             throw new MojoExecutionException("Could not get releases", e);
         }
-        System.getProperty("developmentVersion", project.getVersion());
-        getLog().info("Setting developmentVersion=" + project.getVersion());
+        final Properties userProperties = session.getUserProperties();
+        userProperties.setProperty(RELEASE_VERSION,
+                userProperties.getProperty(RELEASE_VERSION, release));
+        userProperties.setProperty(DEVELOPMENT_VERSION,
+                userProperties.getProperty(DEVELOPMENT_VERSION, project.getVersion()));
+        userProperties.setProperty(NEW_VERSION, release);
+        userProperties.setProperty(CURRENT_VERSION, current);
+        getLog().info("changes-version: setting developmentVersion=" + userProperties.getProperty(DEVELOPMENT_VERSION));
+        getLog().info("changes-version: setting releaseVersion=" + userProperties.getProperty(RELEASE_VERSION));
+        getLog().info("changes-version: setting newVersion=" + userProperties.getProperty(NEW_VERSION));
+        getLog().info("changes-version: setting ONOCurrentVersion=" + userProperties.getProperty(CURRENT_VERSION));
+
     }
 }
