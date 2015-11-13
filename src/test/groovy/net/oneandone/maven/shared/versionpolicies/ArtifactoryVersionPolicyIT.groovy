@@ -39,8 +39,7 @@ class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersio
         ! newVersionInfo.isSnapshot()
         newVersionInfo > oldVersionInfo
     }
-
-    @Ignore("https://www.jfrog.com/jira/browse/RTFACT-8486")
+    
     def 'No version found at Artifactory, i.e. first release'() {
         given:
         checkRepoJfrogIsReachable()
