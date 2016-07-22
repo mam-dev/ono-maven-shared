@@ -41,6 +41,13 @@ public class ChangesVersionMojo extends AbstractMojo {
     static final String NEW_VERSION = "newVersion";
     static final String CURRENT_VERSION = "ONOCurrentVersion";
 
+    private static final String[] VERSION_STRINGS = {
+            DEVELOPMENT_VERSION,
+            RELEASE_VERSION,
+            NEW_VERSION,
+            CURRENT_VERSION
+    };
+
     private final String changesXml;
     /**
      * The Maven project.
@@ -81,16 +88,12 @@ public class ChangesVersionMojo extends AbstractMojo {
             throw new MojoExecutionException("Could not get releases", e);
         }
         final Properties userProperties = session.getUserProperties();
-        userProperties.setProperty(RELEASE_VERSION,
-                userProperties.getProperty(RELEASE_VERSION, release));
-        userProperties.setProperty(DEVELOPMENT_VERSION,
-                userProperties.getProperty(DEVELOPMENT_VERSION, project.getVersion()));
+        userProperties.setProperty(RELEASE_VERSION, release);
+        userProperties.setProperty(DEVELOPMENT_VERSION, project.getVersion());
         userProperties.setProperty(NEW_VERSION, release);
         userProperties.setProperty(CURRENT_VERSION, current);
-        getLog().info("changes-version: setting developmentVersion=" + userProperties.getProperty(DEVELOPMENT_VERSION));
-        getLog().info("changes-version: setting releaseVersion=" + userProperties.getProperty(RELEASE_VERSION));
-        getLog().info("changes-version: setting newVersion=" + userProperties.getProperty(NEW_VERSION));
-        getLog().info("changes-version: setting ONOCurrentVersion=" + userProperties.getProperty(CURRENT_VERSION));
-
+        for (final String versionString : VERSION_STRINGS) {
+            getLog().info("changes-version: setting " + versionString + "=" + userProperties.getProperty(versionString));
+        }
     }
 }
