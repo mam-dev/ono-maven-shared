@@ -83,7 +83,7 @@ public class ChangesVersionMojo extends AbstractMojo {
         try {
             final List<Release> releases = changesReleases.getReleases();
             release = releases.get(0).getVersion();
-            current = releases.size()>1 ? releases.get(1).getVersion() : "UNKNOWN";
+            current = releases.size() > 1 ? releases.get(1).getVersion() : "UNKNOWN";
         } catch (PolicyException e) {
             throw new MojoExecutionException("Could not get releases", e);
         }

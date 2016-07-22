@@ -10,7 +10,7 @@ variables:
     - 'mvn -B -V -e verify site site:stage'
   except:
     - gh-pages
-  
+
 test:jdk7:
   <<: *test
   image: maven:3.3.9-jdk-7
