@@ -1,0 +1,37 @@
+variables:
+  MAVEN_OPTS: >-
+    -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true
+    -Djava.awt.headless=true
+
+.test: &test
+  stage: test
+  script:
+    - 'mvn -B -V -e verify site site:stage'
+  except:
+    - gh-pages
+  
+test:jdk7:
+  <<: *test
+  image: maven:3.3.9-jdk-7
+
+test:jdk8:
+  <<: *test
+  image: maven:3.3.9-jdk-8
+  artifacts:
+    paths:
+      - target/staging/ono-maven-shared/
+
+pages:
+  image: busybox:latest
+  stage: deploy
+  script:
+    - mv target/staging/ono-maven-shared/ public
+  dependencies:
+    - test:jdk8
+  artifacts:
+    paths:
+    - public
+  only:
+    - master
+
