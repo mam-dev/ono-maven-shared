@@ -30,7 +30,10 @@ import java.util.List;
 import java.util.Properties;
 
 /**
+ * Sets {@literal developmentVersion, releaseVersion, newVersion, ONOCurrentVersion, tag, changes.version}
+ * from values in {@literal src/changes/changes.xml}.
  *
+ * Invoke like {@literal ono-maven-shared:changes-version versions:set deploy changes:announcement-generate}
  */
 @Mojo(name = "changes-version", requiresDirectInvocation = true, requiresProject = true)
 public class ChangesVersionMojo extends AbstractMojo {
@@ -40,12 +43,16 @@ public class ChangesVersionMojo extends AbstractMojo {
     static final String RELEASE_VERSION = "releaseVersion";
     static final String NEW_VERSION = "newVersion";
     static final String CURRENT_VERSION = "ONOCurrentVersion";
+    static final String TAG_PROPERTY = "tag";
+    static final String CHANGES_VERSION = "changes.version";
 
     private static final String[] VERSION_STRINGS = {
             DEVELOPMENT_VERSION,
             RELEASE_VERSION,
             NEW_VERSION,
-            CURRENT_VERSION
+            CURRENT_VERSION,
+            TAG_PROPERTY,
+            CHANGES_VERSION
     };
 
     private final String changesXml;
@@ -91,7 +98,9 @@ public class ChangesVersionMojo extends AbstractMojo {
         userProperties.setProperty(RELEASE_VERSION, release);
         userProperties.setProperty(DEVELOPMENT_VERSION, project.getVersion());
         userProperties.setProperty(NEW_VERSION, release);
+        userProperties.setProperty(CHANGES_VERSION, release);
         userProperties.setProperty(CURRENT_VERSION, current);
+        userProperties.setProperty(TAG_PROPERTY, project.getArtifactId() + "-" + release);
         for (final String versionString : VERSION_STRINGS) {
             getLog().info("changes-version: setting " + versionString + "=" + userProperties.getProperty(versionString));
         }

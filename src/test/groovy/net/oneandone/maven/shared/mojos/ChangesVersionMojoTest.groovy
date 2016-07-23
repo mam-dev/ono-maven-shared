@@ -29,7 +29,7 @@ class ChangesVersionMojoTest extends Specification {
         def session = Mock(MavenSession)
         def properties = new Properties()
         session.getUserProperties() >> properties
-        def project = new MavenProject(version: "3-SNAPSHOT", executionRoot: true)
+        def project = new MavenProject(artifactId: "foo", version: "3-SNAPSHOT", executionRoot: true)
         @Subject
         def sut = new ChangesVersionMojo("target/test-classes/changes/twoversions.xml", project, session)
         sut.log = createQuietLogger()
@@ -41,7 +41,9 @@ class ChangesVersionMojoTest extends Specification {
         properties.getProperty(ChangesVersionMojo.DEVELOPMENT_VERSION) == "3-SNAPSHOT"
         properties.getProperty(ChangesVersionMojo.RELEASE_VERSION) == "3.0.2"
         properties.getProperty(ChangesVersionMojo.NEW_VERSION) == "3.0.2"
+        properties.getProperty(ChangesVersionMojo.CHANGES_VERSION) == "3.0.2"
         properties.getProperty(ChangesVersionMojo.CURRENT_VERSION) == "3.0.1"
+        properties.getProperty(ChangesVersionMojo.TAG_PROPERTY) == "foo-3.0.2"
     }
 
     def "Execute with given changes and one release"() {
