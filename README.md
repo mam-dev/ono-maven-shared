@@ -148,5 +148,18 @@ Development Version   | Version of Next Release | Latest Version
     </project>
 ```
 
+## ChangesVersionMojo
+
+* Since 2.7
+* Reuses code from ONOChangesVersionPolicy.
+* Sets the following properties in the reactor:
+  * `developmentVersion`  - for `maven-release-plugin`
+  * `releaseVersion`      - for `maven-release-plugin`
+  * `newVersion`          - for `versions-maven-plugin`
+  * `ONOCurrentVersion`   - for `maven-changes-plugin`
+  * `tag`                 - for `maven-scm-plugin`
+  * `changes.version`     - for `maven-changes-plugin`
+* Say you do not want to use the `maven-release-plugin`.
+* Run `mvn ono-maven-shared:changes-version versions:set deploy -DperformRelease=true`
 
 [maven-release-plugin]: http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#projectVersionPolicyId
