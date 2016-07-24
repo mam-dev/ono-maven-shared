@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.oneandone.maven.poms</groupId>
         <artifactId>foss-parent</artifactId>
-        <version>1.5.8</version>
+        <version>1.5.11</version>
     </parent>
 
     <groupId>net.oneandone.maven</groupId>
@@ -40,7 +40,8 @@
     </ciManagement>
 
     <properties>
-        <maven-release.version>2.5.2</maven-release.version>
+        <maven-release.version>2.5.3</maven-release.version>
+        <findbugs-maven-plugin.version>3.0.4</findbugs-maven-plugin.version>
         <jacoco.check.classRatio>0.90</jacoco.check.classRatio>
         <jacoco.check.instructionRatio>0.75</jacoco.check.instructionRatio>
         <jacoco.check.methodRatio>0.75</jacoco.check.methodRatio>
