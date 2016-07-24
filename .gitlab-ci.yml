@@ -22,6 +22,14 @@ test:jdk8:
     paths:
       - target/staging/ono-maven-shared/
 
+test:jdk8:3.4.0-SNAPSHOT:
+  <<: *test
+  image: mfriedenhagen/docker-maven:3.4.0-SNAPSHOT-jdk-8
+
+test:jdk7:3.4.0-SNAPSHOT:
+  <<: *test
+  image: mfriedenhagen/docker-maven:3.4.0-SNAPSHOT-jdk-7
+
 pages:
   image: busybox:latest
   stage: deploy
