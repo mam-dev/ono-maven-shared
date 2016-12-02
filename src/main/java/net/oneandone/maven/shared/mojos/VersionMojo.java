@@ -1,12 +1,12 @@
 /**
  * Copyright 1&1 Internet AG, https://github.com/1and1/
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,33 +15,35 @@
  */
 package net.oneandone.maven.shared.mojos;
 
-import net.oneandone.maven.shared.ChangesReleases;
-import net.oneandone.maven.shared.changes.model.Release;
+import net.oneandone.maven.shared.versionpolicies.CurrentVersion;
+import org.apache.commons.lang3.Validate;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.policy.PolicyException;
+import org.apache.maven.shared.release.policy.version.VersionPolicy;
+import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
+import org.apache.maven.shared.release.versions.VersionParseException;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
  * Sets {@literal developmentVersion, releaseVersion, newVersion, ONOCurrentVersion, tag, changes.version}
- * from values in {@literal src/changes/changes.xml}.
+ * for a {@link org.apache.maven.shared.release.policy.version.VersionPolicy}.
  *
- * Invoke like {@literal ono-maven-shared:changes-version versions:set deploy changes:announcement-generate}
+ * Invoke like {@literal ono-maven-shared:version versions:set deploy changes:announcement-generate}
  *
- * Deprecated: Use {@literal ono-maven-shared:version -DprojectVersionPolicyId=ONOChangesVersionPolicy} instead.
+ * @since 2.8
  */
-@Mojo(name = "changes-version", requiresDirectInvocation = true, requiresProject = true)
-@Deprecated
-public class ChangesVersionMojo extends AbstractMojo {
+@Mojo(name = "version", requiresDirectInvocation = true, requiresProject = true)
+public class VersionMojo extends AbstractMojo {
 
-    private static final String CHANGES_XML = "src/changes/changes.xml";
     static final String DEVELOPMENT_VERSION = "developmentVersion";
     static final String RELEASE_VERSION = "releaseVersion";
     static final String NEW_VERSION = "newVersion";
@@ -58,7 +60,6 @@ public class ChangesVersionMojo extends AbstractMojo {
             CHANGES_VERSION
     };
 
-    private final String changesXml;
     /**
      * The Maven project.
      */
@@ -71,40 +72,50 @@ public class ChangesVersionMojo extends AbstractMojo {
     @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession session;
 
-    public ChangesVersionMojo() {
-        changesXml = CHANGES_XML;
+    @Parameter(defaultValue = "${projectVersionPolicyId}", readonly = true)
+    private String versionPolicyId;
+
+    @Component
+    Map<String, VersionPolicy> versionPolicies;
+
+    public VersionMojo() {
     }
 
-    ChangesVersionMojo(String changesXml, MavenProject project, MavenSession session) {
-        this.changesXml = changesXml;
+    VersionMojo(MavenProject project, MavenSession session) {
         this.project = project;
-        this.session= session;
+        this.session = session;
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!project.isExecutionRoot()) {
-            getLog().debug("changes-version: skipping because " + project + " is not execution root");
+            getLog().debug("version: skipping because " + project + " is not execution root");
             return;
         }
-        getLog().warn("Deprecated since 2.8, use VersionMojo and set the property projectVersionPolicyId to ONOChangesVersionPolicy");
-        final ChangesReleases changesReleases = new ChangesReleases(changesXml);
+        final VersionPolicy versionPolicy = versionPolicies.get(versionPolicyId);
+        Validate.notNull(versionPolicy, "Unknown projectVersionPolicyId %s, known: %s", versionPolicyId, versionPolicies.keySet());
+        final VersionPolicyRequest versionPolicyRequest = new VersionPolicyRequest();
+        versionPolicyRequest.setVersion(project.getVersion());
         final String release;
-        final String current;
         try {
-            final List<Release> releases = changesReleases.getReleases();
-            release = releases.get(0).getVersion();
-            current = releases.size() > 1 ? releases.get(1).getVersion() : "UNKNOWN";
-        } catch (PolicyException e) {
-            throw new MojoExecutionException("Could not get releases", e);
+            release = versionPolicy.getReleaseVersion(versionPolicyRequest).getVersion();
+            versionPolicy.getDevelopmentVersion(versionPolicyRequest).getVersion();
+        } catch (PolicyException | VersionParseException e) {
+            throw new MojoExecutionException("foo");
         }
         final Properties userProperties = session.getUserProperties();
         userProperties.setProperty(RELEASE_VERSION, release);
         userProperties.setProperty(DEVELOPMENT_VERSION, project.getVersion());
         userProperties.setProperty(NEW_VERSION, release);
         userProperties.setProperty(CHANGES_VERSION, release);
-        userProperties.setProperty(CURRENT_VERSION, current);
         userProperties.setProperty(TAG_PROPERTY, project.getArtifactId() + "-" + release);
+        final String currentVersion;
+        if (versionPolicy instanceof CurrentVersion) {
+            currentVersion = ((CurrentVersion) versionPolicy).getCurrentVersion();
+        } else {
+            currentVersion = "UNKNOWN";
+        }
+        userProperties.setProperty(CURRENT_VERSION, currentVersion);
         for (final String versionString : VERSION_STRINGS) {
             getLog().info("changes-version: setting " + versionString + "=" + userProperties.getProperty(versionString));
         }
