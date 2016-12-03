@@ -81,9 +81,11 @@ public class VersionMojo extends AbstractMojo {
     public VersionMojo() {
     }
 
-    VersionMojo(MavenProject project, MavenSession session) {
+    /** For testing */
+    VersionMojo(MavenProject project, MavenSession session, Map<String, VersionPolicy> versionPolicies) {
         this.project = project;
         this.session = session;
+        this.versionPolicies = versionPolicies;
     }
 
     @Override
@@ -96,24 +98,25 @@ public class VersionMojo extends AbstractMojo {
         Validate.notNull(versionPolicy, "Unknown projectVersionPolicyId %s, known: %s", versionPolicyId, versionPolicies.keySet());
         final VersionPolicyRequest versionPolicyRequest = new VersionPolicyRequest();
         versionPolicyRequest.setVersion(project.getVersion());
-        final String release;
+        final String releaseVersion;
+        final String developmentVersion;
         try {
-            release = versionPolicy.getReleaseVersion(versionPolicyRequest).getVersion();
-            versionPolicy.getDevelopmentVersion(versionPolicyRequest).getVersion();
+            releaseVersion = versionPolicy.getReleaseVersion(versionPolicyRequest).getVersion();
+            developmentVersion = versionPolicy.getDevelopmentVersion(versionPolicyRequest).getVersion();
         } catch (PolicyException | VersionParseException e) {
-            throw new MojoExecutionException("foo");
+            throw new MojoExecutionException("Could not retrieve the version", e);
         }
         final Properties userProperties = session.getUserProperties();
-        userProperties.setProperty(RELEASE_VERSION, release);
-        userProperties.setProperty(DEVELOPMENT_VERSION, project.getVersion());
-        userProperties.setProperty(NEW_VERSION, release);
-        userProperties.setProperty(CHANGES_VERSION, release);
-        userProperties.setProperty(TAG_PROPERTY, project.getArtifactId() + "-" + release);
+        userProperties.setProperty(RELEASE_VERSION, releaseVersion);
+        userProperties.setProperty(DEVELOPMENT_VERSION, developmentVersion);
+        userProperties.setProperty(NEW_VERSION, releaseVersion);
+        userProperties.setProperty(CHANGES_VERSION, releaseVersion);
+        userProperties.setProperty(TAG_PROPERTY, project.getArtifactId() + "-" + releaseVersion);
         final String currentVersion;
         if (versionPolicy instanceof CurrentVersion) {
             currentVersion = ((CurrentVersion) versionPolicy).getCurrentVersion();
         } else {
-            currentVersion = "UNKNOWN";
+            currentVersion = "NOT_SUPPORTED";
         }
         userProperties.setProperty(CURRENT_VERSION, currentVersion);
         for (final String versionString : VERSION_STRINGS) {
