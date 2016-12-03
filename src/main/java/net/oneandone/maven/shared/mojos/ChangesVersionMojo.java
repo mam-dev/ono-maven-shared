@@ -15,19 +15,14 @@
  */
 package net.oneandone.maven.shared.mojos;
 
-import net.oneandone.maven.shared.ChangesReleases;
-import net.oneandone.maven.shared.changes.model.Release;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.policy.PolicyException;
+import org.apache.maven.shared.release.policy.version.VersionPolicy;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 /**
  * Sets {@literal developmentVersion, releaseVersion, newVersion, ONOCurrentVersion, tag, changes.version}
@@ -41,45 +36,17 @@ import java.util.Properties;
 @Deprecated
 public class ChangesVersionMojo extends VersionMojo {
 
-    private static final String CHANGES_XML = "src/changes/changes.xml";
-
-    private final String changesXml;
-
     public ChangesVersionMojo() {
-        changesXml = CHANGES_XML;
+        versionPolicyId = "ONOChangesVersionPolicy";
     }
 
-    ChangesVersionMojo(MavenProject project, MavenSession session, String changesXml) {
-        super(project, session, null, "ONOChangesVersionPolicy");
-        this.changesXml = changesXml;
+    ChangesVersionMojo(MavenProject project, MavenSession session, Map<String, VersionPolicy> versionPolicies) {
+        super(project, session, versionPolicies, "ONOChangesVersionPolicy");
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (!project.isExecutionRoot()) {
-            getLog().debug("changes-version: skipping because " + project + " is not execution root");
-            return;
-        }
         getLog().warn("Deprecated since 2.8, use VersionMojo and set the property projectVersionPolicyId to ONOChangesVersionPolicy");
-        final ChangesReleases changesReleases = new ChangesReleases(changesXml);
-        final String release;
-        final String current;
-        try {
-            final List<Release> releases = changesReleases.getReleases();
-            release = releases.get(0).getVersion();
-            current = releases.size() > 1 ? releases.get(1).getVersion() : "UNKNOWN";
-        } catch (PolicyException e) {
-            throw new MojoExecutionException("Could not get releases", e);
-        }
-        final Properties userProperties = session.getUserProperties();
-        userProperties.setProperty(RELEASE_VERSION, release);
-        userProperties.setProperty(DEVELOPMENT_VERSION, project.getVersion());
-        userProperties.setProperty(NEW_VERSION, release);
-        userProperties.setProperty(CHANGES_VERSION, release);
-        userProperties.setProperty(CURRENT_VERSION, current);
-        userProperties.setProperty(TAG_PROPERTY, project.getArtifactId() + "-" + release);
-        for (final String versionString : VERSION_STRINGS) {
-            getLog().info("changes-version: setting " + versionString + "=" + userProperties.getProperty(versionString));
-        }
+        super.execute();
     }
 }

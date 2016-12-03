@@ -15,10 +15,14 @@
  */
 package net.oneandone.maven.shared.mojos
 
+import net.oneandone.maven.shared.versionpolicies.BuildNumberVersionPolicy
+import net.oneandone.maven.shared.versionpolicies.ChangesVersionPolicy
 import org.apache.maven.execution.MavenSession
 import org.apache.maven.plugin.MojoExecutionException
 import org.apache.maven.plugin.logging.Log
 import org.apache.maven.project.MavenProject
+import org.apache.maven.shared.release.policies.DefaultVersionPolicy
+import org.apache.maven.shared.release.policy.version.VersionPolicy
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -31,7 +35,8 @@ class ChangesVersionMojoTest extends Specification {
         session.getUserProperties() >> properties
         def project = new MavenProject(artifactId: "foo", version: "3-SNAPSHOT", executionRoot: true)
         @Subject
-        def sut = new ChangesVersionMojo(project, session, "target/test-classes/changes/twoversions.xml")
+        sut = new ChangesVersionMojo(project, session,
+                createVersionPolicies(project, "target/test-classes/changes/twoversions.xml"))
         sut.log = createQuietLogger()
 
         when:
@@ -53,7 +58,8 @@ class ChangesVersionMojoTest extends Specification {
         session.getUserProperties() >> properties
         def project = new MavenProject(version: "3-SNAPSHOT", executionRoot: true)
         @Subject
-        def sut = new ChangesVersionMojo(project, session, "target/test-classes/changes/oneversion.xml")
+        sut = new ChangesVersionMojo(project, session,
+                createVersionPolicies(project, "target/test-classes/changes/oneversion.xml"))
         sut.log = createQuietLogger()
 
         when:
@@ -73,14 +79,15 @@ class ChangesVersionMojoTest extends Specification {
         session.getUserProperties() >> properties
         def project = new MavenProject(version: "3-SNAPSHOT", executionRoot: true)
         @Subject
-        def sut = new ChangesVersionMojo(project, session, "target/test-classes/changes/empty_body.xml")
+        sut = new ChangesVersionMojo(project, session,
+                createVersionPolicies(project, "target/test-classes/changes/empty_body.xml"))
         sut.log = createQuietLogger()
 
         when:
         sut.execute()
 
         then:
-        MojoExecutionException e = thrown()
+        thrown(MojoExecutionException)
     }
 
     def "Skip when not execution root"() {
@@ -90,7 +97,8 @@ class ChangesVersionMojoTest extends Specification {
         session.getUserProperties() >> properties
         def project = new MavenProject(version: "3-SNAPSHOT", executionRoot: false)
         @Subject
-        def sut = new ChangesVersionMojo(project, session, "target/test-classes/changes/empty_body.xml")
+        sut = new ChangesVersionMojo(project, session,
+                createVersionPolicies(project, 'target/test-classes/changes/empty_body.xml'))
         sut.log = createQuietLogger()
 
         when:
@@ -102,8 +110,7 @@ class ChangesVersionMojoTest extends Specification {
 
     def 'Has a default constructor used with injection in Maven'() {
         given:
-        @Subject
-        def sut = new ChangesVersionMojo()
+        new ChangesVersionMojo()
 
         expect:
         true
@@ -116,4 +123,11 @@ class ChangesVersionMojoTest extends Specification {
     Log createQuietLogger() {
         return Mock(Log)
     }
+
+    Map<String, VersionPolicy> createVersionPolicies(MavenProject project, String changesFile) {
+        return [
+            'ONOChangesVersionPolicy': new ChangesVersionPolicy(project, changesFile)
+        ]
+    }
+
 }
