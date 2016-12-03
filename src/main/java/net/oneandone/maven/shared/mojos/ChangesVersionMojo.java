@@ -39,46 +39,19 @@ import java.util.Properties;
  */
 @Mojo(name = "changes-version", requiresDirectInvocation = true, requiresProject = true)
 @Deprecated
-public class ChangesVersionMojo extends AbstractMojo {
+public class ChangesVersionMojo extends VersionMojo {
 
     private static final String CHANGES_XML = "src/changes/changes.xml";
-    static final String DEVELOPMENT_VERSION = "developmentVersion";
-    static final String RELEASE_VERSION = "releaseVersion";
-    static final String NEW_VERSION = "newVersion";
-    static final String CURRENT_VERSION = "ONOCurrentVersion";
-    static final String TAG_PROPERTY = "tag";
-    static final String CHANGES_VERSION = "changes.version";
-
-    private static final String[] VERSION_STRINGS = {
-            DEVELOPMENT_VERSION,
-            RELEASE_VERSION,
-            NEW_VERSION,
-            CURRENT_VERSION,
-            TAG_PROPERTY,
-            CHANGES_VERSION
-    };
 
     private final String changesXml;
-    /**
-     * The Maven project.
-     */
-    @Parameter(defaultValue = "${project}", readonly = true)
-    private MavenProject project;
-
-    /**
-     * The Maven session.
-     */
-    @Parameter(defaultValue = "${session}", readonly = true)
-    private MavenSession session;
 
     public ChangesVersionMojo() {
         changesXml = CHANGES_XML;
     }
 
-    ChangesVersionMojo(String changesXml, MavenProject project, MavenSession session) {
+    ChangesVersionMojo(MavenProject project, MavenSession session, String changesXml) {
+        super(project, session, null, "ONOChangesVersionPolicy");
         this.changesXml = changesXml;
-        this.project = project;
-        this.session= session;
     }
 
     @Override

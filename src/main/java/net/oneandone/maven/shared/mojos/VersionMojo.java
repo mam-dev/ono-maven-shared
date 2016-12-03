@@ -50,7 +50,7 @@ public class VersionMojo extends AbstractMojo {
     static final String TAG_PROPERTY = "tag";
     static final String CHANGES_VERSION = "changes.version";
 
-    private static final String[] VERSION_STRINGS = {
+    static final String[] VERSION_STRINGS = {
             DEVELOPMENT_VERSION,
             RELEASE_VERSION,
             NEW_VERSION,
@@ -63,16 +63,16 @@ public class VersionMojo extends AbstractMojo {
      * The Maven project.
      */
     @Parameter(defaultValue = "${project}", readonly = true)
-    private MavenProject project;
+    MavenProject project;
 
     /**
      * The Maven session.
      */
     @Parameter(defaultValue = "${session}", readonly = true)
-    private MavenSession session;
+    MavenSession session;
 
     @Parameter(defaultValue = "${projectVersionPolicyId}", readonly = true)
-    private String versionPolicyId;
+    String versionPolicyId;
 
     @Component
     Map<String, VersionPolicy> versionPolicies;
