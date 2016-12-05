@@ -56,7 +56,7 @@ public class SuffixVersionPolicy implements VersionPolicy {
         }
         final DefaultVersionInfo currentSnapshot = new DefaultVersionInfo(mavenProject.getVersion());
         final VersionPolicyResult result = new VersionPolicyResult();
-        String buildNumberSuffix= projectProperties.getProperty(SUFFIX_IDENTIFIER);
+        String buildNumberSuffix = projectProperties.getProperty(SUFFIX_IDENTIFIER);
 
         final Interpolator interpolator = new StringSearchInterpolator("$\\{", "}");
         interpolator.addValueSource(new PropertiesBasedValueSource(getProperties()));

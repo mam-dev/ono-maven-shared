@@ -21,11 +21,11 @@ import spock.lang.Specification
 public class SuffixVersionPolicyTest extends Specification implements AbstractVersionPolicyTrait {
 
     def 'Has a default constructor used with injection in Maven'() {
-        given:
-        def subjectUnderTest = new SuffixVersionPolicy()
+        when:
+        new SuffixVersionPolicy()
 
-        expect:
-        subjectUnderTest != null;
+        then:
+        noExceptionThrown()
     }
 
     def 'Should throw exception if suffix not set'() {
@@ -44,7 +44,7 @@ public class SuffixVersionPolicyTest extends Specification implements AbstractVe
         setup :
         def subjectUnderTest = new SuffixVersionPolicy();
         def mavenProject = createMavenProject();
-        mavenProject.getProperties().setProperty(SuffixVersionPolicy.SUFFIX_IDENTIFIER,".suffix")
+        mavenProject.properties.setProperty(SuffixVersionPolicy.SUFFIX_IDENTIFIER,".suffix")
         subjectUnderTest.mavenProject = mavenProject
 
         expect:
@@ -55,8 +55,8 @@ public class SuffixVersionPolicyTest extends Specification implements AbstractVe
         setup :
         def subjectUnderTest = new SuffixVersionPolicy();
         def mavenProject = createMavenProject();
-        mavenProject.getProperties().setProperty("suffixVal","myval")
-        mavenProject.getProperties().setProperty(SuffixVersionPolicy.SUFFIX_IDENTIFIER,'.$\\{suffixVal}')
+        mavenProject.properties.setProperty("suffixVal","myval")
+        mavenProject.properties.setProperty(SuffixVersionPolicy.SUFFIX_IDENTIFIER,'.$\\{suffixVal}')
         subjectUnderTest.mavenProject = mavenProject
 
         expect:
@@ -67,7 +67,7 @@ public class SuffixVersionPolicyTest extends Specification implements AbstractVe
         setup :
         def subjectUnderTest = new SuffixVersionPolicy();
         def mavenProject = createMavenProject();
-        mavenProject.getProperties().setProperty(SuffixVersionPolicy.SUFFIX_IDENTIFIER,".suffix")
+        mavenProject.properties.setProperty(SuffixVersionPolicy.SUFFIX_IDENTIFIER,".suffix")
         subjectUnderTest.mavenProject = mavenProject
 
         expect:
