@@ -30,23 +30,24 @@ import java.util.Map;
  *
  * Invoke like {@literal ono-maven-shared:changes-version versions:set deploy changes:announcement-generate}
  *
- * Deprecated: Use {@literal ono-maven-shared:version -DprojectVersionPolicyId=ONOChangesVersionPolicy} instead.
+ * Deprecated: Use {@literal ono-maven-shared:version-policy-versions -DprojectVersionPolicyId=ONOChangesVersionPolicy} instead.
  */
-@Mojo(name = "changes-version", requiresDirectInvocation = true, requiresProject = true)
+@Mojo(name = "changes-version", requiresDirectInvocation = true)
 @Deprecated
-public class ChangesVersionMojo extends VersionMojo {
+public class ChangesVersionPolicyVersionsMojo extends VersionPolicyVersionsMojo {
 
-    public ChangesVersionMojo() {
+    public ChangesVersionPolicyVersionsMojo() {
         versionPolicyId = "ONOChangesVersionPolicy";
     }
 
-    ChangesVersionMojo(MavenProject project, MavenSession session, Map<String, VersionPolicy> versionPolicies) {
+    // For unit tests
+    ChangesVersionPolicyVersionsMojo(MavenProject project, MavenSession session, Map<String, VersionPolicy> versionPolicies) {
         super(project, session, versionPolicies, "ONOChangesVersionPolicy");
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        getLog().warn("Deprecated since 2.8, use VersionMojo and set the property projectVersionPolicyId to ONOChangesVersionPolicy");
+        getLog().warn("Deprecated since 2.8, use 'ono-maven-shared:version-policy-versions' and set the property projectVersionPolicyId to ONOChangesVersionPolicy");
         super.execute();
     }
 }

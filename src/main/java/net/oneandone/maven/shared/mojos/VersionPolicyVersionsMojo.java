@@ -34,14 +34,14 @@ import java.util.Properties;
 
 /**
  * Sets {@literal developmentVersion, releaseVersion, newVersion, ONOCurrentVersion, tag, changes.version}
- * for a {@link org.apache.maven.shared.release.policy.version.VersionPolicy}.
+ * for a given {@link org.apache.maven.shared.release.policy.version.VersionPolicy}.
  *
- * Invoke like {@literal ono-maven-shared:version versions:set deploy changes:announcement-generate}
+ * Invoke like {@literal ono-maven-shared:version-policy-versions versions:set deploy changes:announcement-generate}
  *
  * @since 2.8
  */
-@Mojo(name = "version", requiresDirectInvocation = true, requiresProject = true)
-public class VersionMojo extends AbstractMojo {
+@Mojo(name = "version-policy-versions", requiresDirectInvocation = true)
+public class VersionPolicyVersionsMojo extends AbstractMojo {
 
     static final String DEVELOPMENT_VERSION = "developmentVersion";
     static final String RELEASE_VERSION = "releaseVersion";
@@ -50,7 +50,7 @@ public class VersionMojo extends AbstractMojo {
     static final String TAG_PROPERTY = "tag";
     static final String CHANGES_VERSION = "changes.version";
 
-    static final String[] VERSION_STRINGS = {
+    private static final String[] VERSION_STRINGS = {
             DEVELOPMENT_VERSION,
             RELEASE_VERSION,
             NEW_VERSION,
@@ -63,25 +63,27 @@ public class VersionMojo extends AbstractMojo {
      * The Maven project.
      */
     @Parameter(defaultValue = "${project}", readonly = true)
-    MavenProject project;
+    private MavenProject project;
 
     /**
      * The Maven session.
      */
     @Parameter(defaultValue = "${session}", readonly = true)
-    MavenSession session;
+    private MavenSession session;
 
     @Parameter(defaultValue = "${projectVersionPolicyId}", readonly = true)
     String versionPolicyId;
 
     @Component
-    Map<String, VersionPolicy> versionPolicies;
+    private Map<String, VersionPolicy> versionPolicies;
 
-    public VersionMojo() {
+    /** Needed for standard invocation */
+    @SuppressWarnings("WeakerAccess")
+    public VersionPolicyVersionsMojo() {
     }
 
     /** For testing */
-    VersionMojo(MavenProject project, MavenSession session, Map<String, VersionPolicy> versionPolicies, String versionPolicyId) {
+    VersionPolicyVersionsMojo(MavenProject project, MavenSession session, Map<String, VersionPolicy> versionPolicies, String versionPolicyId) {
         this.project = project;
         this.session = session;
         this.versionPolicies = versionPolicies;

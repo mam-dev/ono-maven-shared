@@ -12,7 +12,7 @@ import org.apache.maven.shared.release.policy.version.VersionPolicy
 import spock.lang.Specification
 import spock.lang.Subject
 
-class VersionMojoTest extends Specification implements AbstractVersionPolicyTrait {
+class VersionPolicyVersionsMojoTest extends Specification implements AbstractVersionPolicyTrait {
     def "Execute with default policyVersionId"() {
         given:
         def session = Mock(MavenSession)
@@ -20,7 +20,7 @@ class VersionMojoTest extends Specification implements AbstractVersionPolicyTrai
         session.getUserProperties() >> properties
         def project = new MavenProject(artifactId: "foo", version: "3-SNAPSHOT", executionRoot: true)
         @Subject
-        def sut = new VersionMojo(project, session, createVersionPolicies(project), 'default')
+        def sut = new VersionPolicyVersionsMojo(project, session, createVersionPolicies(project), 'default')
         sut.log = createQuietLogger()
 
         when:
@@ -40,7 +40,7 @@ class VersionMojoTest extends Specification implements AbstractVersionPolicyTrai
         session.getUserProperties() >> properties
         def project = new MavenProject(artifactId: "foo", version: "3-SNAPSHOT", executionRoot: true)
         @Subject
-        def sut = new VersionMojo(project, session, createVersionPolicies(project), 'ONOChangesVersionPolicy')
+        def sut = new VersionPolicyVersionsMojo(project, session, createVersionPolicies(project), 'ONOChangesVersionPolicy')
         sut.log = createQuietLogger()
 
         when:
@@ -60,7 +60,7 @@ class VersionMojoTest extends Specification implements AbstractVersionPolicyTrai
         session.getUserProperties() >> properties
         def project = new MavenProject(artifactId: "foo", version: "3-SNAPSHOT", executionRoot: false)
         @Subject
-        def sut = new VersionMojo(project, session, null, null)
+        def sut = new VersionPolicyVersionsMojo(project, session, null, null)
         sut.log = createQuietLogger()
 
         when:
@@ -78,7 +78,7 @@ class VersionMojoTest extends Specification implements AbstractVersionPolicyTrai
         def project = new MavenProject(artifactId: "foo", version: "3-SNAPSHOT", executionRoot: true)
         session.getUserProperties() >> properties
         @Subject
-        def sut = new VersionMojo(project, session, createVersionPolicies(project), 'unknown')
+        def sut = new VersionPolicyVersionsMojo(project, session, createVersionPolicies(project), 'unknown')
         sut.log = createQuietLogger()
 
         when:

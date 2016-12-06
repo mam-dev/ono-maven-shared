@@ -15,18 +15,16 @@
  */
 package net.oneandone.maven.shared.mojos
 
-import net.oneandone.maven.shared.versionpolicies.BuildNumberVersionPolicy
 import net.oneandone.maven.shared.versionpolicies.ChangesVersionPolicy
 import org.apache.maven.execution.MavenSession
 import org.apache.maven.plugin.MojoExecutionException
 import org.apache.maven.plugin.logging.Log
 import org.apache.maven.project.MavenProject
-import org.apache.maven.shared.release.policies.DefaultVersionPolicy
 import org.apache.maven.shared.release.policy.version.VersionPolicy
 import spock.lang.Specification
 import spock.lang.Subject
 
-class ChangesVersionMojoTest extends Specification {
+class ChangesVersionPolicyVersionsMojoTest extends Specification {
 
     def "Execute with given changes and two releases"() {
         given:
@@ -34,8 +32,9 @@ class ChangesVersionMojoTest extends Specification {
         def properties = new Properties()
         session.getUserProperties() >> properties
         def project = new MavenProject(artifactId: "foo", version: "3-SNAPSHOT", executionRoot: true)
+        //noinspection GrDeprecatedAPIUsage
         @Subject
-        sut = new ChangesVersionMojo(project, session,
+        sut = new ChangesVersionPolicyVersionsMojo(project, session,
                 createVersionPolicies(project, "target/test-classes/changes/twoversions.xml"))
         sut.log = createQuietLogger()
 
@@ -43,12 +42,12 @@ class ChangesVersionMojoTest extends Specification {
         sut.execute()
 
         then:
-        properties.getProperty(VersionMojo.DEVELOPMENT_VERSION) == "3-SNAPSHOT"
-        properties.getProperty(VersionMojo.RELEASE_VERSION) == "3.0.2"
-        properties.getProperty(VersionMojo.NEW_VERSION) == "3.0.2"
-        properties.getProperty(VersionMojo.CHANGES_VERSION) == "3.0.2"
-        properties.getProperty(VersionMojo.CURRENT_VERSION) == "3.0.1"
-        properties.getProperty(VersionMojo.TAG_PROPERTY) == "foo-3.0.2"
+        properties.getProperty(VersionPolicyVersionsMojo.DEVELOPMENT_VERSION) == "3-SNAPSHOT"
+        properties.getProperty(VersionPolicyVersionsMojo.RELEASE_VERSION) == "3.0.2"
+        properties.getProperty(VersionPolicyVersionsMojo.NEW_VERSION) == "3.0.2"
+        properties.getProperty(VersionPolicyVersionsMojo.CHANGES_VERSION) == "3.0.2"
+        properties.getProperty(VersionPolicyVersionsMojo.CURRENT_VERSION) == "3.0.1"
+        properties.getProperty(VersionPolicyVersionsMojo.TAG_PROPERTY) == "foo-3.0.2"
     }
 
     def "Execute with given changes and one release"() {
@@ -57,8 +56,9 @@ class ChangesVersionMojoTest extends Specification {
         def properties = new Properties()
         session.getUserProperties() >> properties
         def project = new MavenProject(version: "3-SNAPSHOT", executionRoot: true)
+        //noinspection GrDeprecatedAPIUsage
         @Subject
-        sut = new ChangesVersionMojo(project, session,
+        sut = new ChangesVersionPolicyVersionsMojo(project, session,
                 createVersionPolicies(project, "target/test-classes/changes/oneversion.xml"))
         sut.log = createQuietLogger()
 
@@ -66,10 +66,10 @@ class ChangesVersionMojoTest extends Specification {
         sut.execute()
 
         then:
-        properties.getProperty(VersionMojo.DEVELOPMENT_VERSION) == "3-SNAPSHOT"
-        properties.getProperty(VersionMojo.RELEASE_VERSION) == "3.0.2"
-        properties.getProperty(VersionMojo.NEW_VERSION) == "3.0.2"
-        properties.getProperty(VersionMojo.CURRENT_VERSION) == "UNKNOWN"
+        properties.getProperty(VersionPolicyVersionsMojo.DEVELOPMENT_VERSION) == "3-SNAPSHOT"
+        properties.getProperty(VersionPolicyVersionsMojo.RELEASE_VERSION) == "3.0.2"
+        properties.getProperty(VersionPolicyVersionsMojo.NEW_VERSION) == "3.0.2"
+        properties.getProperty(VersionPolicyVersionsMojo.CURRENT_VERSION) == "UNKNOWN"
     }
 
     def "Choke with nochanges"() {
@@ -78,8 +78,9 @@ class ChangesVersionMojoTest extends Specification {
         def properties = new Properties()
         session.getUserProperties() >> properties
         def project = new MavenProject(version: "3-SNAPSHOT", executionRoot: true)
+        //noinspection GrDeprecatedAPIUsage
         @Subject
-        sut = new ChangesVersionMojo(project, session,
+        sut = new ChangesVersionPolicyVersionsMojo(project, session,
                 createVersionPolicies(project, "target/test-classes/changes/empty_body.xml"))
         sut.log = createQuietLogger()
 
@@ -96,8 +97,9 @@ class ChangesVersionMojoTest extends Specification {
         def properties = new Properties()
         session.getUserProperties() >> properties
         def project = new MavenProject(version: "3-SNAPSHOT", executionRoot: false)
+        //noinspection GrDeprecatedAPIUsage
         @Subject
-        sut = new ChangesVersionMojo(project, session,
+        sut = new ChangesVersionPolicyVersionsMojo(project, session,
                 createVersionPolicies(project, 'target/test-classes/changes/empty_body.xml'))
         sut.log = createQuietLogger()
 
@@ -105,12 +107,13 @@ class ChangesVersionMojoTest extends Specification {
         sut.execute()
 
         then:
-        properties.getProperty(VersionMojo.DEVELOPMENT_VERSION) == null
+        properties.getProperty(VersionPolicyVersionsMojo.DEVELOPMENT_VERSION) == null
     }
 
     def 'Has a default constructor used with injection in Maven'() {
         given:
-        new ChangesVersionMojo()
+        //noinspection GrDeprecatedAPIUsage
+        new ChangesVersionPolicyVersionsMojo()
 
         expect:
         true
