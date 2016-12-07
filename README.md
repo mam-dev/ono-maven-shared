@@ -124,7 +124,7 @@ Development Version   | Version of Next Release | Latest Version
     <project>
         <properties>
             <projectVersionPolicyId>ONOBuildNumberVersionPolicy</projectVersionPolicyId>
-            <buildnumber-version-policy-identifier>TRAVIS_BUILD_NUMBER<buildnumber-version-policy-identifier>
+            <buildnumber-version-policy-identifier>TRAVIS_BUILD_NUMBER</buildnumber-version-policy-identifier>
         </properties>
         <!-- do not forget to include ono-maven-shared as dependency as stated above -->
     </project>
@@ -151,18 +151,27 @@ Development Version   | Version of Next Release | Latest Version
     </project>
 ```
 
-## ChangesVersionMojo
+## VersionPolicyVersionsMojo
 
-* Since 2.7
-* Reuses code from ONOChangesVersionPolicy.
+* Since 2.8
+* Define properties for usage in other Maven goals.
+* Set your `projectVersionPolicyId` appropriately.
 * Sets the following properties in the reactor:
   * `developmentVersion`  - for `maven-release-plugin`
   * `releaseVersion`      - for `maven-release-plugin`
   * `newVersion`          - for `versions-maven-plugin`
-  * `ONOCurrentVersion`   - for `maven-changes-plugin`
+  * `ONOCurrentVersion`   - for e.g. `maven-changes-plugin`
   * `tag`                 - for `maven-scm-plugin`
   * `changes.version`     - for `maven-changes-plugin`
+* Output depends on the set `projectVersionPolicyId`.
+* The property `ONOCurrentVersion` is currently only supported for 
+  `ONOArtifactoryVersionPolicy` and `ONOChangesVersionPolicy`
 * Say you do not want to use the `maven-release-plugin`.
-* Run `mvn ono-maven-shared:changes-version versions:set deploy -DperformRelease=true`
+* Run `mvn ono-maven-shared:version-policy-versions versions:set deploy -DperformRelease=true`
+
+## ChangesVersionPolicyVersionsMojo
+
+* Since 2.7, deprecated with 2.8, just set property `projectVersionPolicyId` to `ONOChangesVersionPolicy`
+  and use `ono-maven-shared:version-policy-versions` instead.
 
 [maven-release-plugin]: http://maven.apache.org/maven-release/maven-release-plugin/prepare-mojo.html#projectVersionPolicyId
