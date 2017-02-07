@@ -57,6 +57,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
     static final String ARTIFACTORY_VERSION_POLICY_REPOSITORIES = "artifactory-version-policy-repositories";
 
     static final String ARTIFACTORY_VERSION_POLICY_SERVER_ID = "artifactory-version-policy-server-id";
+    public static final String ENCODING = "UTF-8";
 
     @Requirement
     MavenProject mavenProject;
@@ -73,7 +74,9 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
     private String currentVersion;
 
     // For injection.
-    public ArtifactoryVersionPolicy() {}
+    public ArtifactoryVersionPolicy() {
+        // For injection.
+    }
 
     // Just for tests
     ArtifactoryVersionPolicy(MavenProject mavenProject, MavenSession mavenSession) {
@@ -89,12 +92,12 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
             final URL url = new URL(urlString);
             final InputStream stream = getInputStream(url);
             try {
-                currentVersion = IOUtil.toString(stream, "UTF-8");
+                currentVersion = IOUtil.toString(stream, ENCODING);
             } finally {
                 stream.close();
             }
-        } catch (FileNotFoundException e) {
-            currentVersion = "0"; //mavenProject.getVersion().replace("-SNAPSHOT", "");
+        } catch (FileNotFoundException e) { //NOSONAR: getting a 404 is standard usecase, no logging needed.
+            currentVersion = "0";
         } catch (IOException e) {
             throw new PolicyException("Unable to access " + urlString, e);
         }
@@ -122,9 +125,9 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
         artifactoryRepositories = properties.getProperty(ARTIFACTORY_VERSION_POLICY_REPOSITORIES, REPOSITORIES);
         serverId = properties.getProperty(ARTIFACTORY_VERSION_POLICY_SERVER_ID, "");
         return String.format(
-                        Locale.ENGLISH,
-                        httpArtifactory + "/api/search/latestVersion?g=%s&a=%s&repos=%s",
-                mavenProject.getGroupId(), mavenProject.getArtifactId(), artifactoryRepositories);
+                Locale.ENGLISH,
+                "%s/api/search/latestVersion?g=%s&a=%s&repos=%s",
+                httpArtifactory, mavenProject.getGroupId(), mavenProject.getArtifactId(), artifactoryRepositories);
     }
 
     InputStream getInputStream(URL url) throws IOException {
@@ -139,7 +142,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
             final String username = server.getUsername();
             final String password = server.getPassword();
             final String s = username + ":" + password;
-            final String auth = new String(Base64.encodeBase64(s.getBytes("UTF-8")), "UTF-8");
+            final String auth = new String(Base64.encodeBase64(s.getBytes(ENCODING)), ENCODING);
             connection.setRequestProperty("Authorization", "Basic " + auth);
         }
         return connection;

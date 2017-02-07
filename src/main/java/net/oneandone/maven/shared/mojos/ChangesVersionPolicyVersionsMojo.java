@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * Invoke like {@literal ono-maven-shared:changes-version versions:set deploy changes:announcement-generate}
  *
- * Deprecated: Use {@literal ono-maven-shared:version-policy-versions -DprojectVersionPolicyId=ONOChangesVersionPolicy} instead.
+ * @deprecated: Use {@literal ono-maven-shared:version-policy-versions -DprojectVersionPolicyId=ONOChangesVersionPolicy} instead.
  */
 @Mojo(name = "changes-version", requiresDirectInvocation = true)
 @Deprecated

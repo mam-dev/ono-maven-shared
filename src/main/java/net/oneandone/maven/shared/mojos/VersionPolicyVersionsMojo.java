@@ -80,6 +80,7 @@ public class VersionPolicyVersionsMojo extends AbstractMojo {
     /** Needed for standard invocation */
     @SuppressWarnings("WeakerAccess")
     public VersionPolicyVersionsMojo() {
+        // for injection
     }
 
     /** For testing */
