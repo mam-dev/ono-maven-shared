@@ -101,7 +101,7 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
         final VersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
         final VersionInfo nextVersion = versionInfo.getNextVersion();
         final VersionInfo currentSnapshot = new DefaultVersionInfo(mavenProject.getVersion());
-        if (nextVersion.compareTo(currentSnapshot) < 0) {
+        if (versionInfo.compareTo(currentSnapshot) <= 0) {
             versionPolicyResult.setVersion(currentSnapshot.getReleaseVersionString() + ".0");
         } else {
             versionPolicyResult.setVersion(nextVersion.getReleaseVersionString());
