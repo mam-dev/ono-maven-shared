@@ -88,10 +88,10 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
 
         where:
         snapShotVersion | releaseVersion | currentVersion
-        '1.6-SNAPSHOT'  | '1.6.0'        | '0'
-        '2-SNAPSHOT'    | '2.0'          | '0'
-        '2.0-SNAPSHOT'  | '2.0.0'        | '0'
-        '1-SNAPSHOT'    | '1.0'          | '0'
+        '1.6-SNAPSHOT'  | '1.6.0'        | null
+        '2-SNAPSHOT'    | '2.0'          | null
+        '2.0-SNAPSHOT'  | '2.0.0'        | null
+        '1-SNAPSHOT'    | '1.0'          | null
 
     }
 
