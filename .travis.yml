@@ -4,7 +4,7 @@ env:
   - MAVEN_VERSION=3.2.5
   - MAVEN_VERSION=3.3.3
 jdk:
-  - oraclejdk7
+  - openjdk7
   - oraclejdk8
 install:
   - "mvn -N io.takari:maven:wrapper -Dmaven=${MAVEN_VERSION}"
