@@ -94,12 +94,17 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
                 stream.close();
             }
         } catch (FileNotFoundException e) {
-            currentVersion = "0"; //mavenProject.getVersion().replace("-SNAPSHOT", "");
+            currentVersion = null;
         } catch (IOException e) {
             throw new PolicyException("Unable to access " + urlString, e);
         }
-        final VersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
-        final VersionInfo nextVersion = versionInfo.getNextVersion();
+        final VersionInfo nextVersion;
+        if(currentVersion == null) {
+            nextVersion = new DefaultVersionInfo("0");
+        } else {
+            DefaultVersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
+            nextVersion = versionInfo.getNextVersion();
+        }
         final VersionInfo currentSnapshot = new DefaultVersionInfo(mavenProject.getVersion());
         if (nextVersion.compareTo(currentSnapshot) < 0) {
             versionPolicyResult.setVersion(currentSnapshot.getReleaseVersionString() + ".0");
