@@ -11,24 +11,24 @@ variables:
   except:
     - gh-pages
 
-test:jdk7:
+test:jdk-7:3.5.4:
   <<: *test
-  image: mfriedenhagen/docker-maven:3.3.9-jdk-7
+  image: maven:3.5.4-jdk-7-slim
 
-test:jdk8:
+test:jdk-8:3.5.4:
   <<: *test
-  image: mfriedenhagen/docker-maven:3.3.9-jdk-8
+  image: maven:3.5.4-jdk-8-slim
   artifacts:
     paths:
       - target/staging/ono-maven-shared/
 
-test:jdk8:3.4.0-SNAPSHOT:
+test:jdk-7:3.5.2:
   <<: *test
-  image: mfriedenhagen/docker-maven:3.4.0-SNAPSHOT-jdk-8
+  image: maven:3.5.2-jdk-7-slim
 
-test:jdk7:3.4.0-SNAPSHOT:
+test:jdk-8:3.5.2:
   <<: *test
-  image: mfriedenhagen/docker-maven:3.4.0-SNAPSHOT-jdk-7
+  image: maven:3.5.2-jdk-8-slim
 
 pages:
   image: busybox:latest
@@ -36,7 +36,7 @@ pages:
   script:
     - mv target/staging/ono-maven-shared/ public
   dependencies:
-    - test:jdk8
+    - test:jdk-8:3.5.4
   artifacts:
     paths:
     - public

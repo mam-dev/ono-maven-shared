@@ -1,11 +1,9 @@
 language: java
 sudo: false
 env:
-  - MAVEN_VERSION=3.3.9
-  - MAVEN_VERSION=3.5.0
   - MAVEN_VERSION=3.5.2
+  - MAVEN_VERSION=3.5.4
 jdk:
-  - openjdk7
   - oraclejdk8
 install:
   - "mvn -N io.takari:maven:wrapper -Dmaven=${MAVEN_VERSION}"
