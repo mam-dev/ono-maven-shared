@@ -1,34 +1,27 @@
-variables:
-  MAVEN_OPTS: >-
-    -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
-    -Dorg.slf4j.simpleLogger.showDateTime=true
-    -Djava.awt.headless=true
-
 .test: &test
+  variables:
+    MAVEN_OPTS: >-
+      -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+      -Dorg.slf4j.simpleLogger.showDateTime=true
+      -Djava.awt.headless=true
+  image: ${CI_JOB_NAME}
   stage: test
   script:
     - 'mvn -B -V -e verify site site:stage'
   except:
     - gh-pages
 
-test:jdk-7:3.5.4:
-  <<: *test
-  image: maven:3.5.4-jdk-7-slim
+maven:3.5.4-jdk-7-slim: *test
 
-test:jdk-8:3.5.4:
+maven:3.5.4-jdk-8-slim:
   <<: *test
-  image: maven:3.5.4-jdk-8-slim
   artifacts:
     paths:
       - target/staging/ono-maven-shared/
 
-test:jdk-7:3.5.2:
-  <<: *test
-  image: maven:3.5.2-jdk-7-slim
+maven:3.5.2-jdk-7-slim: *test
 
-test:jdk-8:3.5.2:
-  <<: *test
-  image: maven:3.5.2-jdk-8-slim
+maven:3.5.2-jdk-8-slim: *test
 
 pages:
   image: busybox:latest
@@ -36,7 +29,7 @@ pages:
   script:
     - mv target/staging/ono-maven-shared/ public
   dependencies:
-    - test:jdk-8:3.5.4
+    - maven:3.5.4-jdk-8-slim
   artifacts:
     paths:
     - public
