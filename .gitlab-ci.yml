@@ -11,17 +11,13 @@
   except:
     - gh-pages
 
-maven:3.5.4-jdk-7-slim: *test
+#maven:3.5-jdk-8-slim: *test
 
-maven:3.5.4-jdk-8-slim:
+maven:3.6-jdk-8-slim:
   <<: *test
   artifacts:
     paths:
       - target/staging/ono-maven-shared/
-
-maven:3.5.2-jdk-7-slim: *test
-
-maven:3.5.2-jdk-8-slim: *test
 
 pages:
   image: busybox:latest
@@ -29,7 +25,7 @@ pages:
   script:
     - mv target/staging/ono-maven-shared/ public
   dependencies:
-    - maven:3.5.4-jdk-8-slim
+    - maven:3.6-jdk-8-slim
   artifacts:
     paths:
     - public
