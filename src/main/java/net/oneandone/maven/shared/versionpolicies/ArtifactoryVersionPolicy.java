@@ -49,7 +49,7 @@ import java.util.Properties;
 )
 public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
 
-    private static final String HTTP_ARTIFACTORY = "http://repo.jfrog.org/artifactory";
+    private static final String HTTP_ARTIFACTORY = "https://repo.jfrog.org/artifactory";
     private static final String REPOSITORIES = "repo1";
 
     static final String ARTIFACTORY_VERSION_POLICY_API = "artifactory-version-policy-http";

@@ -20,6 +20,7 @@ import org.junit.AssumptionViolatedException
 import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Unroll
 
 class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersionPolicyTrait {
 
@@ -39,12 +40,13 @@ class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersio
         ! newVersionInfo.isSnapshot()
         newVersionInfo > oldVersionInfo
     }
-    
-    def 'No version found at Artifactory, i.e. first release'() {
+
+    @Unroll('Handles new artifacts #snapshotVersion -> #releaseVersion')
+    def 'No version found at Artifactory, i.e. first release'(String snapshotVersion, String releaseVersion) {
         given:
         checkRepoJfrogIsReachable()
         subjectUnderTest.mavenProject.artifactId = 'unknown-artifact-id-i-do-not-exist'
-        subjectUnderTest.mavenProject.version = '1.0-SNAPSHOT'
+        subjectUnderTest.mavenProject.version = snapshotVersion
 
         when:
         def version = subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER).version
@@ -54,12 +56,17 @@ class ArtifactoryVersionPolicyIT extends Specification implements AbstractVersio
         then:
         newSnapshotVersion == subjectUnderTest.mavenProject.version
         ! newVersionInfo.isSnapshot()
-        newVersionInfo.releaseVersionString == '1.0.0'
+        newVersionInfo.releaseVersionString == releaseVersion
+
+        where:
+        snapshotVersion | releaseVersion
+        '0.1-SNAPSHOT'  | '0.1.0'
+        '1.0-SNAPSHOT'  | '1.0.0'
     }
 
     static void checkRepoJfrogIsReachable() {
         try {
-            final URLConnection urlConnection = new URL('http://repo.jfrog.org/artifactory').openConnection()
+            final URLConnection urlConnection = new URL('https://repo.jfrog.org/artifactory').openConnection()
             try {
                 urlConnection.setConnectTimeout(5000)
                 urlConnection.getInputStream().close()
