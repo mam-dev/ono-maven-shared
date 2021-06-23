@@ -88,6 +88,7 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
 
         where:
         snapShotVersion | releaseVersion | currentVersion
+        '0.1-SNAPSHOT'  | '0.1.0'        | null
         '1.6-SNAPSHOT'  | '1.6.0'        | null
         '2-SNAPSHOT'    | '2.0'          | null
         '2.0-SNAPSHOT'  | '2.0.0'        | null
@@ -135,7 +136,7 @@ class ArtifactoryVersionPolicyTest extends Specification implements AbstractVers
 
     def 'Defaults to jfrog and repo1 when neither Artifactory URL nor repositories are given'() {
         expect:
-        subjectUnderTest.createUrlString() == 'http://repo.jfrog.org/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=repo1'
+        subjectUnderTest.createUrlString() == 'https://repo.jfrog.org/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=repo1'
     }
 
     def 'Picks up properties for Artifactory'() {
