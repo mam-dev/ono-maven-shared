@@ -124,7 +124,7 @@ Development Version   | Version of Next Release | Latest Version
     <project>
         <properties>
             <projectVersionPolicyId>ONOBuildNumberVersionPolicy</projectVersionPolicyId>
-            <buildnumber-version-policy-identifier>TRAVIS_BUILD_NUMBER<buildnumber-version-policy-identifier>
+            <buildnumber-version-policy-identifier>TRAVIS_BUILD_NUMBER</buildnumber-version-policy-identifier>
         </properties>
         <!-- do not forget to include ono-maven-shared as dependency as stated above -->
     </project>
