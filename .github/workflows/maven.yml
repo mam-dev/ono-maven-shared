@@ -23,8 +23,6 @@ jobs:
           - '8'
           - '11'
           - '17'
-        maven_version:
-          - 3.10.0
     name: 'Build with Java ${{ matrix.java }} and Maven ${{ matrix.maven_version }}'
     steps:
       - uses: actions/checkout@v7
@@ -34,11 +32,6 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
           cache: maven
-      - name: Fetch Maven 3.10.0 and build
+      - name: Fetch Maven
         run: |
-          maven_version=${{ matrix.maven_version }}
-          maven=apache-maven-${maven_version}
-          maven_url=https://repo1.maven.org/maven2/org/apache/maven/apache-maven/${maven_version}/${maven}-bin.tar.gz
-          curl -sf ${maven_url} | ( cd .git/ && tar xz )
-          export PATH=${PWD}/.git/${maven}/bin:${PATH}
           mvn --batch-mode --show-version --errors --no-transfer-progress install
