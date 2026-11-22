@@ -1,10 +1,42 @@
-name: Verify
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
 
 on:
   push:
+    # branches:
   pull_request:
+    # branches: # [ $default-branch ]
 
 jobs:
   build:
-    name: Verify
-    uses: apache/maven-gh-actions-shared/.github/workflows/maven.yml@v5
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java:
+          - '17'
+        maven_version:
+          - 3.10.0
+    name: 'Build with Java ${{ matrix.java }} and Maven ${{ matrix.maven_version }}'
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+          cache: maven
+      - name: Fetch Maven 3.10.0 and build
+        run: |
+          maven_version=${{ matrix.maven_version }}
+          maven=apache-maven-${maven_version}
+          maven_url=https://repo1.maven.org/maven2/org/apache/maven/apache-maven/${maven_version}/${maven}-bin.tar.gz
+          curl -sf ${maven_url} | ( cd .git/ && tar xz )
+          export PATH=${PWD}/.git/${maven}/bin:${PATH}
+          mvn --batch-mode --show-version --errors --no-transfer-progress install
