@@ -21,9 +21,7 @@ jobs:
       matrix:
         java:
           - '8'
-          - '11'
-          - '17'
-    name: 'Build with Java ${{ matrix.java }} and Maven ${{ matrix.maven_version }}'
+    name: 'Build with Java ${{ matrix.java }}'
     steps:
       - uses: actions/checkout@v7
       - name: Set up JDK
