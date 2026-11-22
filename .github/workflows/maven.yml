@@ -21,6 +21,7 @@ jobs:
       matrix:
         java:
           - '8'
+          - '11'
           - '17'
         maven_version:
           - 3.10.0
