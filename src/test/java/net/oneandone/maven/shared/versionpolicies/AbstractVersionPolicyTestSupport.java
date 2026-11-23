@@ -13,9 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.oneandone.maven.shared.mojos
+package net.oneandone.maven.shared.versionpolicies;
 
-import spock.lang.Specification
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 
-class JacocoResultsMojoTest extends Specification {
+abstract class AbstractVersionPolicyTestSupport {
+
+    static final VersionPolicyRequest VPR_DOES_NOT_MATTER = new VersionPolicyRequest();
+
+    MavenProject createMavenProject() {
+        MavenProject mavenProject = new MavenProject();
+        mavenProject.setGroupId("net.oneandone.maven.poms");
+        mavenProject.setArtifactId("foss-parent");
+        mavenProject.setVersion("1-SNAPSHOT");
+        return mavenProject;
+    }
 }

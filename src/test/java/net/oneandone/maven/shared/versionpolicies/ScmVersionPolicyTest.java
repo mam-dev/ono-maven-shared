@@ -15,14 +15,23 @@
  */
 package net.oneandone.maven.shared.versionpolicies;
 
-import org.apache.maven.project.MavenProject
-import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
+import org.junit.jupiter.api.Test;
 
-trait AbstractVersionPolicyTrait {
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-    static VersionPolicyRequest VPR_DOES_NOT_MATTER = new VersionPolicyRequest()
+class ScmVersionPolicyTest extends AbstractVersionPolicyTestSupport {
 
-    MavenProject createMavenProject() {
-        return new MavenProject(groupId: "net.oneandone.maven.poms", artifactId: "foss-parent", version: "1-SNAPSHOT");
+    private final ScmVersionPolicy subjectUnderTest = new ScmVersionPolicy();
+
+    @Test
+    void testGetReleaseVersion() throws Exception {
+        // expect
+        assertNull(subjectUnderTest.getReleaseVersion(VPR_DOES_NOT_MATTER));
+    }
+
+    @Test
+    void testGetDevelopmentVersion() throws Exception {
+        // expect
+        assertNull(subjectUnderTest.getDevelopmentVersion(VPR_DOES_NOT_MATTER));
     }
 }

@@ -8,6 +8,10 @@
 [![Release](https://img.shields.io/maven-central/v/net.oneandone.maven/ono-maven-shared*.svg?label=latest%20release)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22net.oneandone.maven%22%20AND%20a%3A%22ono-maven-shared%22)
 [![GitHub license](https://img.shields.io/github/license/1and1/ono-maven-shared.svg)]()
 
+## Build requirements
+
+Build and test with JDK 17 or newer. The library is compiled for Java 8 compatibility.
+
 ## VersionPolicies
 
 ### Introduction
