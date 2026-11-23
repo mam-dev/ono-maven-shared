@@ -20,7 +20,9 @@ jobs:
     strategy:
       matrix:
         java:
-          - '8'
+          - '17'
+          - '21'
+          - '25'
     name: 'Build with Java ${{ matrix.java }}'
     steps:
       - uses: actions/checkout@v7
