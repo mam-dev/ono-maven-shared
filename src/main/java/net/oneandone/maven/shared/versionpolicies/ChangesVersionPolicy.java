@@ -68,7 +68,7 @@ public class ChangesVersionPolicy implements VersionPolicy, CurrentVersion {
         if (releases.size() > 1) {
             currentVersion = releases.get(1).getVersion();
         } else {
-            currentVersion = "UNKNOWN";
+            currentVersion = UNKNOWN;
         }
         return versionPolicyResult;
     }

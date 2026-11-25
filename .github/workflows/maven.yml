@@ -20,7 +20,6 @@ jobs:
     strategy:
       matrix:
         java:
-          - '17'
           - '21'
           - '25'
     name: 'Build with Java ${{ matrix.java }}'
