@@ -22,25 +22,25 @@ import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
+import org.eclipse.sisu.Description;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.util.Map;
 
 /**
  * A {@link VersionPolicy} implementation that retrieves a BUILD_NUMBER from a CI-system and bases the next
  * releaseVersion on it.
  */
-@Component(
-        role = VersionPolicy.class,
-        hint = "ONOBuildNumberVersionPolicy",
-        description = "Retrieves a BUILD_NUMBER from a CI-system and bases the next releaseVersion on it."
-)
+@Named("ONOBuildNumberVersionPolicy")
+@Singleton
+@Description("Retrieves a BUILD_NUMBER from a CI-system and bases the next releaseVersion on it.")
 public class BuildNumberVersionPolicy implements VersionPolicy {
 
     private static final String DEFAULT_BUILD_NUMBER_IDENTIFIER = "BUILD_NUMBER";
     Map<String, String> systemEnv;
-    @Requirement
+    @Inject
     MavenProject mavenProject;
 
     /**

@@ -26,10 +26,12 @@ import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.apache.maven.shared.utils.io.IOUtil;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.Base64;
+import org.eclipse.sisu.Description;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,11 +44,9 @@ import java.util.Properties;
  * A {@link VersionPolicy} implementation that retrieves the latest release from Artifactory and
  * bases the next releaseVersion on it.
  */
-@Component(
-        role = VersionPolicy.class,
-        hint = "ONOArtifactoryVersionPolicy",
-        description = "Retrieves the latest release from Artifactory and bases the next releaseVersion on it."
-)
+@Named("ONOArtifactoryVersionPolicy")
+@Singleton
+@Description("Retrieves the latest release from Artifactory and bases the next releaseVersion on it.")
 public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
 
     private static final String HTTP_ARTIFACTORY = "https://repo.jfrog.org/artifactory";
@@ -58,10 +58,10 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
 
     static final String ARTIFACTORY_VERSION_POLICY_SERVER_ID = "artifactory-version-policy-server-id";
 
-    @Requirement
+    @Inject
     MavenProject mavenProject;
 
-    @Requirement
+    @Inject
     MavenSession mavenSession;
 
     String httpArtifactory;

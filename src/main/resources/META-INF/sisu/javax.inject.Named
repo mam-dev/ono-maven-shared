@@ -1,0 +1,5 @@
+net.oneandone.maven.shared.releasephases.InputVariablesAndAddPreviousVersionPhase
+net.oneandone.maven.shared.versionpolicies.ArtifactoryVersionPolicy
+net.oneandone.maven.shared.versionpolicies.BuildNumberVersionPolicy
+net.oneandone.maven.shared.versionpolicies.ChangesVersionPolicy
+net.oneandone.maven.shared.versionpolicies.ScmVersionPolicy
