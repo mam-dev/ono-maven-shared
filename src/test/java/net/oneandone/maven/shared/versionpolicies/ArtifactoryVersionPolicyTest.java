@@ -25,16 +25,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,7 +48,7 @@ class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTestSupport {
             "'1.5.6-SNAPSHOT', '1.5.7'",
             "'1.5.7-SNAPSHOT', '1.5.7'"
     })
-    void incrementsVersion(String snapshotVersion, String releaseVersion) throws Exception {
+    void incrementsVersion(String snapshotVersion, String releaseVersion) {
         // when
         mavenProject.setVersion(snapshotVersion);
 
@@ -74,7 +68,7 @@ class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTestSupport {
             "'2-SNAPSHOT', '2.0'",
             "'2.0-SNAPSHOT', '2.0.0'"
     })
-    void restartsWithZero(String snapshotVersion, String releaseVersion) throws Exception {
+    void restartsWithZero(String snapshotVersion, String releaseVersion) {
         // when
         mavenProject.setVersion(snapshotVersion);
 
@@ -90,19 +84,19 @@ class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTestSupport {
     // where
     @ParameterizedTest(name = "Handles new artifacts {0} -> {1}")
     @CsvSource(value = {
-            "'0.1-SNAPSHOT', '0.1.0', NULL",
-            "'1.6-SNAPSHOT', '1.6.0', NULL",
-            "'2-SNAPSHOT', '2.0', NULL",
-            "'2.0-SNAPSHOT', '2.0.0', NULL",
-            "'1-SNAPSHOT', '1.0', NULL"
-    }, nullValues = "NULL")
-    void handlesNewArtifacts(String snapshotVersion, String releaseVersion, String currentVersion) throws Exception {
+            "'0.1-SNAPSHOT', '0.1.0', 'UNKNOWN'",
+            "'1.6-SNAPSHOT', '1.6.0', 'UNKNOWN'",
+            "'2-SNAPSHOT', '2.0', 'UNKNOWN'",
+            "'2.0-SNAPSHOT', '2.0.0', 'UNKNOWN'",
+            "'1-SNAPSHOT', '1.0', 'UNKNOWN'"
+    })
+    void handlesNewArtifacts(String snapshotVersion, String releaseVersion, String currentVersion) {
         // given
-        MavenProject project = createMavenProject();
-        ArtifactoryVersionPolicy policy = new ArtifactoryVersionPolicy(project, null) {
+        final var project = createMavenProject();
+        final var policy = new ArtifactoryVersionPolicy(project, null) {
             @Override
-            InputStream getInputStream(URL url) throws IOException {
-                throw new FileNotFoundException("HTTP/1.1 404 Not Found");
+            String fetchBody(URI uri) {
+                return "";
             }
         };
         project.setVersion(snapshotVersion);
@@ -120,37 +114,15 @@ class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTestSupport {
     @DisplayName("Throws when Artifactory URL could not be opened")
     void throwsWhenArtifactoryUrlCouldNotBeOpened() {
         // given
-        ArtifactoryVersionPolicy policy = new ArtifactoryVersionPolicy(createMavenProject(), null) {
+        final var policy = new ArtifactoryVersionPolicy(createMavenProject(), null) {
             @Override
-            InputStream getInputStream(URL url) throws IOException {
+            String fetchBody(URI uri) throws IOException {
                 throw new IOException("Could not open");
             }
         };
 
         // when / then
-        PolicyException exception = assertThrows(PolicyException.class,
-                () -> policy.getReleaseVersion(VPR_DOES_NOT_MATTER));
-        assertEquals(IOException.class, exception.getCause().getClass());
-    }
-
-    @Test
-    @DisplayName("Throws when Artifactory URL chokes during read")
-    void throwsWhenArtifactoryUrlChokesDuringRead() {
-        // given
-        ArtifactoryVersionPolicy policy = new ArtifactoryVersionPolicy(createMavenProject(), null) {
-            @Override
-            InputStream getInputStream(URL url) {
-                return new InputStream() {
-                    @Override
-                    public int read() throws IOException {
-                        throw new IOException("VP could not read");
-                    }
-                };
-            }
-        };
-
-        // when / then
-        PolicyException exception = assertThrows(PolicyException.class,
+        final var exception = assertThrows(PolicyException.class,
                 () -> policy.getReleaseVersion(VPR_DOES_NOT_MATTER));
         assertEquals(IOException.class, exception.getCause().getClass());
     }
@@ -167,43 +139,33 @@ class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTestSupport {
     @DisplayName("Picks up properties for Artifactory")
     void picksUpPropertiesForArtifactory() throws Exception {
         // given
-        Server server = new Server();
+        final var server = new Server();
         server.setId("private-repo");
         server.setUsername("username");
         server.setPassword("password");
-        Settings settings = new Settings();
+        final var settings = new Settings();
         settings.addServer(server);
-        MavenSession session = new MavenSession(null, settings, null, null, null, null, null, null, null);
-        MavenProject project = createMavenProject();
-        ArtifactoryVersionPolicyStub policy = new ArtifactoryVersionPolicyStub(project, session, "1.5.6");
+        final var session = new MavenSession(null, settings, null, null, null, null, null, null, null);
+        final var project = createMavenProject();
+        final var policy = new ArtifactoryVersionPolicyStub(project, session, "1.5.6");
 
         // when
-        project.getProperties().setProperty("artifactory-version-policy-http",
+        final var properties = project.getProperties();
+        properties.setProperty("artifactory-version-policy-http",
                 "http://artifactory.example.com/artifactory");
-        project.getProperties().setProperty("artifactory-version-policy-server-id", "private-repo");
-        project.getProperties().setProperty("artifactory-version-policy-repositories", "first-repo,second-repo");
-        String urlString = policy.createUrlString();
-        RecordingHttpURLConnection[] recordedConnection = new RecordingHttpURLConnection[1];
-        URL testUrl = new URL(null, urlString, new URLStreamHandler() {
-            @Override
-            protected URLConnection openConnection(URL url) {
-                recordedConnection[0] = new RecordingHttpURLConnection(url);
-                return recordedConnection[0];
-            }
-        });
-        HttpURLConnection connection = policy.getHttpURLConnection(testUrl);
+        properties.setProperty("artifactory-version-policy-server-id", "private-repo");
+        properties.setProperty("artifactory-version-policy-repositories", "first-repo,second-repo");
+        final var urlString = policy.createUrlString();
+        final var request = policy.createHttpRequest(URI.create(urlString));
 
         // then
         assertAll(
                 () -> assertEquals(
                         "http://artifactory.example.com/artifactory/api/search/latestVersion?g=net.oneandone.maven.poms&a=foss-parent&repos=first-repo,second-repo",
-                        urlString),
+                        request.uri().toString()),
                 () -> assertEquals("Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
-                        recordedConnection[0].requestProperties.get("Authorization"))
+                        request.headers().firstValue("Authorization").orElseThrow())
         );
-
-        // cleanup
-        connection.disconnect();
     }
 
     @Test
@@ -224,33 +186,9 @@ class ArtifactoryVersionPolicyTest extends AbstractVersionPolicyTestSupport {
         }
 
         @Override
-        InputStream getInputStream(URL url) {
-            return new ByteArrayInputStream(releaseVersionFromArtifactory.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        String fetchBody(URI uri) {
+            return releaseVersionFromArtifactory;
         }
     }
 
-    private static class RecordingHttpURLConnection extends HttpURLConnection {
-
-        private final Map<String, String> requestProperties = new HashMap<>();
-
-        RecordingHttpURLConnection(URL url) {
-            super(url);
-        }
-
-        @Override
-        public void setRequestProperty(String key, String value) {
-            requestProperties.put(key, value);
-        }
-
-        @Override
-        public void connect() {}
-
-        @Override
-        public void disconnect() {}
-
-        @Override
-        public boolean usingProxy() {
-            return false;
-        }
-    }
 }

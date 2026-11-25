@@ -23,20 +23,20 @@ import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
-import org.apache.maven.shared.release.versions.VersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.apache.maven.shared.utils.io.IOUtil;
-import org.codehaus.plexus.util.Base64;
 import org.eclipse.sisu.Description;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Base64;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -58,6 +58,16 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
 
     static final String ARTIFACTORY_VERSION_POLICY_SERVER_ID = "artifactory-version-policy-server-id";
 
+    private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
+    private static final Duration READ_TIMEOUT = Duration.ofSeconds(30);
+
+    private static final HttpClient DEFAULT_HTTP_CLIENT = HttpClient.newBuilder()
+            .followRedirects(HttpClient.Redirect.NORMAL)
+            .connectTimeout(CONNECT_TIMEOUT)
+            .build();
+
+    final HttpClient httpClient;
+
     @Inject
     MavenProject mavenProject;
 
@@ -70,42 +80,38 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
 
     String serverId;
 
-    private String currentVersion;
+    private String currentVersion = "";
 
     // For injection.
-    public ArtifactoryVersionPolicy() {}
+    public ArtifactoryVersionPolicy() {
+        this.httpClient = DEFAULT_HTTP_CLIENT;
+    }
 
     // Just for tests
     ArtifactoryVersionPolicy(MavenProject mavenProject, MavenSession mavenSession) {
+        this(mavenProject, mavenSession, DEFAULT_HTTP_CLIENT);
+    }
+
+    // Just for tests
+    ArtifactoryVersionPolicy(MavenProject mavenProject, MavenSession mavenSession, HttpClient httpClient) {
+        this.httpClient = httpClient;
         this.mavenProject = mavenProject;
         this.mavenSession = mavenSession;
     }
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
-        final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
-        final String urlString = createUrlString();
+        final var versionPolicyResult = new VersionPolicyResult();
+        final var urlString = createUrlString();
         try {
-            final URL url = new URL(urlString);
-            final InputStream stream = getInputStream(url);
-            try {
-                currentVersion = IOUtil.toString(stream, "UTF-8");
-            } finally {
-                stream.close();
-            }
-        } catch (FileNotFoundException e) {
-            currentVersion = null;
+            currentVersion = fetchBody(URI.create(urlString));
         } catch (IOException e) {
             throw new PolicyException("Unable to access " + urlString, e);
         }
-        final VersionInfo nextVersion;
-        if(currentVersion == null) {
-            nextVersion = new DefaultVersionInfo("0");
-        } else {
-            DefaultVersionInfo versionInfo = new DefaultVersionInfo(currentVersion);
-            nextVersion = versionInfo.getNextVersion();
-        }
-        final VersionInfo currentSnapshot = new DefaultVersionInfo(mavenProject.getVersion());
+        final var nextVersion = currentVersion.isEmpty()
+                ? new DefaultVersionInfo("0")
+                : new DefaultVersionInfo(currentVersion).getNextVersion();
+        final var currentSnapshot = new DefaultVersionInfo(mavenProject.getVersion());
         if (nextVersion.compareTo(currentSnapshot) < 0) {
             versionPolicyResult.setVersion(currentSnapshot.getReleaseVersionString() + ".0");
         } else {
@@ -115,14 +121,14 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
     }
 
     @Override
-    public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws PolicyException, VersionParseException {
-        final VersionPolicyResult versionPolicyResult = new VersionPolicyResult();
+    public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) {
+        final var versionPolicyResult = new VersionPolicyResult();
         versionPolicyResult.setVersion(mavenProject.getVersion());
         return versionPolicyResult;
     }
 
     String createUrlString() {
-        final Properties properties = mavenProject.getProperties();
+        final var properties = mavenProject.getProperties();
         httpArtifactory = properties.getProperty(ARTIFACTORY_VERSION_POLICY_API, HTTP_ARTIFACTORY);
         artifactoryRepositories = properties.getProperty(ARTIFACTORY_VERSION_POLICY_REPOSITORIES, REPOSITORIES);
         serverId = properties.getProperty(ARTIFACTORY_VERSION_POLICY_SERVER_ID, "");
@@ -132,26 +138,39 @@ public class ArtifactoryVersionPolicy implements VersionPolicy, CurrentVersion {
                 mavenProject.getGroupId(), mavenProject.getArtifactId(), artifactoryRepositories);
     }
 
-    InputStream getInputStream(URL url) throws IOException {
-        final HttpURLConnection connection = getHttpURLConnection(url);
-        return connection.getInputStream();
+    String fetchBody(URI uri) throws IOException {
+        final HttpResponse<String> response;
+        try {
+            response = httpClient.send(createHttpRequest(uri),
+                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Interrupted while accessing " + uri, e);
+        }
+        if (response.statusCode() == 404) {
+            return "";
+        }
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new IOException("HTTP request failed with status code " + response.statusCode());
+        }
+        return response.body();
     }
 
-    HttpURLConnection getHttpURLConnection(URL url) throws IOException {
-        final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    HttpRequest createHttpRequest(URI uri) {
+        final var request = HttpRequest.newBuilder(uri).timeout(READ_TIMEOUT).GET();
         if (!"".equals(serverId)) {
-            final Server server = mavenSession.getSettings().getServer(serverId);
-            final String username = server.getUsername();
-            final String password = server.getPassword();
-            final String s = username + ":" + password;
-            final String auth = new String(Base64.encodeBase64(s.getBytes("UTF-8")), "UTF-8");
-            connection.setRequestProperty("Authorization", "Basic " + auth);
+            final var server = mavenSession.getSettings().getServer(serverId);
+            final var username = server.getUsername();
+            final var password = server.getPassword();
+            final var s = username + ":" + password;
+            final var auth = Base64.getEncoder().encodeToString(s.getBytes(StandardCharsets.UTF_8));
+            request.header("Authorization", "Basic " + auth);
         }
-        return connection;
+        return request.build();
     }
 
     @Override
     public String getCurrentVersion() {
-        return currentVersion;
+        return currentVersion.isEmpty() ? UNKNOWN : currentVersion;
     }
 }

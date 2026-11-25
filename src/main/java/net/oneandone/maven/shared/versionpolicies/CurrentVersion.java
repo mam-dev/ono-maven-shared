@@ -20,6 +20,11 @@ package net.oneandone.maven.shared.versionpolicies;
  */
 public interface CurrentVersion {
     /**
+     * Returned when no current version is known.
+     */
+    String UNKNOWN = "UNKNOWN";
+
+    /**
      *
      * @return the latest known version.
      */
