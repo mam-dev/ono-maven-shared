@@ -23,9 +23,11 @@ import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
+import org.eclipse.sisu.Description;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.util.List;
 
 /**
@@ -33,14 +35,12 @@ import java.util.List;
  *
  * @since 2.5
  */
-@Component(
-        role = VersionPolicy.class,
-        hint = "ONOChangesVersionPolicy",
-        description = "A VersionPolicy implementation that retrieves the latest version from the changes file."
-)
+@Named("ONOChangesVersionPolicy")
+@Singleton
+@Description("A VersionPolicy implementation that retrieves the latest version from the changes file.")
 public class ChangesVersionPolicy implements VersionPolicy, CurrentVersion {
 
-    @Requirement
+    @Inject
     MavenProject mavenProject;
 
     private static final String CHANGES_XML = "src/changes/changes.xml";

@@ -25,9 +25,11 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.phase.AbstractReleasePhase;
 import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
+import org.eclipse.sisu.Description;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Map;
 
@@ -36,17 +38,16 @@ import java.util.Map;
  * extends exec.additionalArguments with the latest released version from Artifactory when
  * the {@code projectVersionPolicyId} is {@code ONOArtifactoryVersionPolicy}
  */
-@Component(
-        role = ReleasePhase.class,
-        hint = "input-variables",
-        description = "Add latestVersion and input any variables that were not yet configured."
-)
+@Named("input-variables")
+@Singleton
+@Description("Add latestVersion and input any variables that were not yet configured.")
 public class InputVariablesAndAddPreviousVersionPhase extends AbstractReleasePhase {
 
-    @Requirement(role = VersionPolicy.class)
+    @Inject
     Map<String, VersionPolicy> versionPolicies;
 
-    @Requirement(role = ReleasePhase.class, hint = "maven-release-manager-input-variables")
+    @Inject
+    @Named("maven-release-manager-input-variables")
     ReleasePhase inputVariablesPhase;
 
     public InputVariablesAndAddPreviousVersionPhase() {
